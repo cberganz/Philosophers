@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 05:47:15 by cberganz          #+#    #+#             */
-/*   Updated: 2022/01/28 09:37:58 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/01/29 09:21:28 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ int8_t	parse_args(int argc, char **args, t_root *root)
 		printf("Error.\nInvalid arguments.");
 		return (-2);
 	}
+	root->start_time = get_time();
 	root->number_of_philo = ft_atoi(args[1]);
 	root->time_to_die = ft_atoi(args[2]);
 	root->time_to_eat = ft_atoi(args[3]);

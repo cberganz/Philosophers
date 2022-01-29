@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 04:32:23 by cberganz          #+#    #+#             */
-/*   Updated: 2022/01/28 12:29:01 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/01/29 09:06:08 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,23 @@
 
 void	*philo_life(void *philo)
 {
-	printf("Hello from philosopher number %d. My right fork is %d, my left fork is %d\n", ((t_philo *)philo)->id, (int)((t_philo *)philo)->right, (int)((t_philo *)philo)->left);
+	while (1)
+	{
+		philo_do_take_fork(philo);
+		philo_do_eat(philo);
+		philo_do_sleep(philo);
+		philo_do_think(philo);
+		if ((get_time() - ((t_philo *)philo)->last_eat) > ((t_philo *)philo)->root->time_to_die)
+			philo_do_die(philo);
+		if (((t_philo *)philo)->root->finish == 1)
+			break ;	
+	}
+	return (philo);
 }
 
 int	main(int argc, char *argv[])
 {
 	t_root			root;
-	pthread_t		*th_arr;
-	pthread_mutex_t	*mutex_arr;
 
 	if (parse_args(argc, argv, &root))
 		return (EXIT_FAILURE);
@@ -29,7 +38,7 @@ int	main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	if (create_threads(&root, root.number_of_philo, &philo_life))
 		return (EXIT_FAILURE);
-	join_threads(&root, root.number_of_philo, NULL);
+	join_threads(&root, root.number_of_philo, NULL); // Handle error return
 	destroy_mutex(root.forks, root.number_of_philo);
 	return (EXIT_SUCCESS);
 }

@@ -6,34 +6,43 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 12:15:42 by cberganz          #+#    #+#             */
-/*   Updated: 2022/01/28 12:29:00 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/01/29 09:54:16 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void philo_do_taken_fork(t_philo *philo)
+void philo_do_take_fork(t_philo *philo)
 {
 	pthread_mutex_lock(philo->right);
-	printf("timestamp_in_ms %d has taken a fork.\n", philo->id);		
+	printf("%d %d has taken a fork\n", get_time() - philo->root->start_time, philo->id);		
 	pthread_mutex_lock(philo->left);
-	printf("timestamp_in_ms %d has taken a fork.\n", philo->id);		
+	printf("%d %d has taken a fork\n", get_time() - philo->root->start_time, philo->id);
 }
 
 void philo_do_eat(t_philo *philo)
 {
-	printf("timestamp_in_ms %d is eating.\n", philo->id);		
+	philo->last_eat = get_time();
+	printf("%d %d is eating\n", get_time() - philo->root->start_time, philo->id);		
 	usleep(philo->root->time_to_eat * 1000);
+	pthread_mutex_unlock(philo->right);
+	pthread_mutex_unlock(philo->left);
 	philo->eat_count++;
 }
 
 void philo_do_sleep(t_philo *philo)
 {
-	printf("timestamp_in_ms %d is sleeping.\n", philo->id);
+	printf("%d %d is sleeping\n", get_time() - philo->root->start_time, philo->id);
 	usleep(philo->root->time_to_sleep * 1000);
 }
 
 void philo_do_think(t_philo *philo)
 {
-	printf("timestamp_in_ms %d is thinking.\n", philo->id);
+	printf("%d %d is thinking\n", get_time() - philo->root->start_time, philo->id);
+}
+
+void philo_do_die(t_philo *philo)
+{
+	philo->root->finish = 1;
+	printf("%d %d died\n", get_time() - philo->root->start_time, philo->id);
 }

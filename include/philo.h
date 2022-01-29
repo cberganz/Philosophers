@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 04:28:26 by cberganz          #+#    #+#             */
-/*   Updated: 2022/01/28 12:27:56 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/01/29 09:20:53 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,18 @@
 # include <stdint.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <sys/time.h>
+//# include <time.h>
 
 typedef struct s_philo
 {
 	int				id;
 	int				eat_count;
+	int				last_eat;
 	pthread_t		thread;
 	pthread_mutex_t	*right;
 	pthread_mutex_t	*left;
 	struct s_root	*root;
-	struct timeval	die_time;
 }	t_philo;
 
 typedef struct s_root
@@ -37,6 +39,7 @@ typedef struct s_root
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				number_of_meals;
+	int				start_time;
 	int				finish;
 	pthread_mutex_t	*forks;
 	t_philo			*philos;	
@@ -47,6 +50,16 @@ typedef struct s_root
 */
 
 int8_t	parse_args(int argc, char **args, t_root *root);
+
+/*
+**	Philo life
+*/
+
+void philo_do_take_fork(t_philo *philo);
+void philo_do_eat(t_philo *philo);
+void philo_do_sleep(t_philo *philo);
+void philo_do_think(t_philo *philo);
+void philo_do_die(t_philo *philo);
 
 /*
 **	Thread utils
@@ -62,6 +75,7 @@ void	destroy_mutex(pthread_mutex_t *forks, int nb);
 */
 
 int	ft_atoi(const char *nptr);
+int	get_time(void);
 
 #endif
 		
