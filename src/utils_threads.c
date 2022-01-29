@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 04:27:51 by cberganz          #+#    #+#             */
-/*   Updated: 2022/01/29 08:57:09 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/01/29 17:31:09 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,8 @@ int8_t	create_threads(t_root *root, int nb, void *(*func_ptr)(void *))
 			root->philos[nb].left = &root->forks[nb - 1];
 		else
 			root->philos[nb].left = &root->forks[root->number_of_philo - 1];
-		if (pthread_create(&root->philos[nb].thread, NULL, func_ptr, (void *)&root->philos[nb]) != 0)
+		if (pthread_create(&root->philos[nb].thread, NULL, func_ptr, (void *)&root->philos[nb]) != 0
+			|| pthread_detach(root->philos[nb].thread))
 		{
 				free(root->philos);
 				printf("Error at create_threads() while creating threads.\n");
@@ -61,7 +62,7 @@ void	**join_threads(t_root *root, int nb, void **ret)
 		ret[nb] = NULL;
 	while (--nb >= 0)
 	{
-		if (pthread_join(root->philos[nb].thread, ret/* + nb*/) != 0) // handle + nb
+		if (pthread_join(root->philos[nb].thread, ret)) // handle + nb
 		{
 				free(root->philos);
 				return (NULL); // print error message
@@ -88,6 +89,9 @@ int8_t	create_mutex(t_root *root, int nb)
 	}
 	while (--nb >= 0)
 		pthread_mutex_init(&root->forks[nb], NULL);
+	pthread_mutex_init(&root->end, NULL);
+	pthread_mutex_lock(&root->end);
+	pthread_mutex_init(&root->print, NULL);
 	return (0);
 }
 

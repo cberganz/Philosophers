@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 05:47:15 by cberganz          #+#    #+#             */
-/*   Updated: 2022/01/29 09:21:28 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/01/29 13:51:37 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ static uint8_t	args_are_not_numerical(char **args)
 **	Initialize the t_philo structure with the values given by user.
 **	Print error message and return -1 in case of an invalid number of arguments.
 **	Print error message and return -2 if any argument is not valid.
+**	Print error message and return -3 if any argument is above 1.
 **	If no number of meals is set by user, its value is set to -1.
 */
 
@@ -54,7 +55,7 @@ int8_t	parse_args(int argc, char **args, t_root *root)
 	}
 	if (args_are_not_numerical(args))
 	{
-		printf("Error.\nInvalid arguments.");
+		printf("Error.\nInvalid arguments.\n");
 		return (-2);
 	}
 	root->start_time = get_time();
@@ -62,6 +63,11 @@ int8_t	parse_args(int argc, char **args, t_root *root)
 	root->time_to_die = ft_atoi(args[2]);
 	root->time_to_eat = ft_atoi(args[3]);
 	root->time_to_sleep = ft_atoi(args[4]);
+	if (root->number_of_philo < 1 || root->time_to_die < 1 || root->time_to_eat < 1 || root->time_to_sleep < 1)
+	{
+		printf("Error.\nEvery argument must be over 1.\n");
+		return (-3);
+	}
 	if (args[5] != NULL)
 		root->number_of_meals = ft_atoi(args[5]);
 	else

@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 04:28:26 by cberganz          #+#    #+#             */
-/*   Updated: 2022/01/29 09:20:53 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/01/29 16:57:16 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,22 @@ typedef struct s_root
 	int				number_of_meals;
 	int				start_time;
 	int				finish;
+	pthread_mutex_t	end;
+	pthread_mutex_t	print;
 	pthread_mutex_t	*forks;
 	t_philo			*philos;	
 }	t_root;
+
+/*
+**	Messages
+*/
+
+# define DIE "died"
+# define EAT_ENOUGHT "TO CHANGE"
+# define FORK "has taken a fork"
+# define EAT "is eating"
+# define SLEEP "is sleeping"
+# define THINK "is thinking"
 
 /*
 **	Parsing
@@ -76,6 +89,7 @@ void	destroy_mutex(pthread_mutex_t *forks, int nb);
 
 int	ft_atoi(const char *nptr);
 int	get_time(void);
+void	print_message(t_philo *philo, char *msg);
 
 #endif
 		
