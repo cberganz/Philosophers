@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 04:28:26 by cberganz          #+#    #+#             */
-/*   Updated: 2022/01/29 16:57:16 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/01/30 14:24:11 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_philo
 	pthread_t		thread;
 	pthread_mutex_t	*right;
 	pthread_mutex_t	*left;
+	pthread_mutex_t	is_eating;
 	struct s_root	*root;
 }	t_philo;
 

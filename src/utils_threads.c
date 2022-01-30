@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 04:27:51 by cberganz          #+#    #+#             */
-/*   Updated: 2022/01/29 17:31:09 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/01/30 14:26:12 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int8_t	create_threads(t_root *root, int nb, void *(*func_ptr)(void *))
 		root->philos[nb].last_eat = get_time();
 		root->philos[nb].root = root;
 		root->philos[nb].right = &root->forks[nb];
+		pthread_mutex_init(&root->philos[nb].is_eating, NULL);
 		if (nb != 0)
 			root->philos[nb].left = &root->forks[nb - 1];
 		else
