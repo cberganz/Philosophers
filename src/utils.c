@@ -37,6 +37,16 @@ int	ft_atoi(const char *nptr)
 	return (result * sign);
 }
 
+static int	ft_strcmp(const char *s1, const char *s2)
+{
+	size_t	i;
+
+	i = 0;
+	while (s1[i] == s2[i] && s1[i])
+		i++;
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
+
 int	get_time(void)
 {
 	static struct timeval	time;
@@ -46,14 +56,31 @@ int	get_time(void)
 	ret = (time.tv_sec * 1000) + (time.tv_usec / 1000);
 	return (ret);
 }
-#include <string.h>
+
+void	my_usleep(long int timetosleep)
+{
+	long int start;
+	long int actual_time;
+	long int end;
+
+	start = get_time();
+	end = start + timetosleep;
+	while (1)
+	{
+		actual_time = get_time();
+		if (actual_time >= end)
+			break ;
+		usleep(10);
+	}
+}
+
 void	print_message(t_philo *philo, char *msg)
 {
 	pthread_mutex_lock(&philo->root->print);
 	if (philo->root->finish == 0)
 	{
 		printf("%d %d %s\n", get_time() - philo->root->start_time, philo->id, msg);
-		if (strcmp(msg, DIE) == 0 || strcmp(msg, EAT_ENOUGHT) == 0)
+		if (ft_strcmp(msg, DIE) == 0 || ft_strcmp(msg, EAT_ENOUGHT) == 0)
 			philo->root->finish = 1;
 	}
 	pthread_mutex_unlock(&philo->root->print);

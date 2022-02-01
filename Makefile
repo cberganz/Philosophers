@@ -22,6 +22,7 @@ CC			= clang
 CFLAGS		= -Wall -Wextra -Werror -O3
 
 SRC_FILES=	philo.c						\
+			philo_alive.c				\
 		  	philo_do.c					\
 			utils_threads.c				\
 			utils.c						\

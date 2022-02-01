@@ -18,8 +18,8 @@
 # include <stdint.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <string.h>
 # include <sys/time.h>
-//# include <time.h>
 
 typedef struct s_philo
 {
@@ -29,7 +29,7 @@ typedef struct s_philo
 	pthread_t		thread;
 	pthread_mutex_t	*right;
 	pthread_mutex_t	*left;
-	pthread_mutex_t	is_eating;
+	pthread_mutex_t	eating;
 	struct s_root	*root;
 }	t_philo;
 
@@ -42,7 +42,6 @@ typedef struct s_root
 	int				number_of_meals;
 	int				start_time;
 	int				finish;
-	pthread_mutex_t	end;
 	pthread_mutex_t	print;
 	pthread_mutex_t	*forks;
 	t_philo			*philos;	
@@ -69,15 +68,17 @@ int8_t	parse_args(int argc, char **args, t_root *root);
 **	Philo life
 */
 
-void philo_do_take_fork(t_philo *philo);
-void philo_do_eat(t_philo *philo);
-void philo_do_sleep(t_philo *philo);
-void philo_do_think(t_philo *philo);
-void philo_do_die(t_philo *philo);
+void	*philo_life(void *philo);
+void	philo_master(t_root *root);
+void	philo_do_take_fork(t_philo *philo);
+void	philo_do_eat(t_philo *philo);
+void	philo_do_sleep(t_philo *philo);
+void	philo_do_think(t_philo *philo);
+void	philo_do_die(t_philo *philo);
 
 /*
 **	Thread utils
-*/
+*/	
 
 int8_t	create_threads(t_root *root, int nb, void *(*func_ptr)(void *));
 void	**join_threads(t_root *root, int nb, void **ret);
@@ -88,9 +89,10 @@ void	destroy_mutex(pthread_mutex_t *forks, int nb);
 **	Utils
 */
 
-int	ft_atoi(const char *nptr);
-int	get_time(void);
+int		ft_atoi(const char *nptr);
+int		get_time(void);
 void	print_message(t_philo *philo, char *msg);
+void	my_usleep(long int timetosleep);
 
 #endif
 		
