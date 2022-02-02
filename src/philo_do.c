@@ -36,19 +36,14 @@ void philo_do_eat(t_philo *philo)
 	print_message(philo, EAT);
 	pthread_mutex_lock(&philo->eating);
 	philo->last_eat = get_time();
+	philo->eat_count++;
+	if (philo->root->number_of_meals > 0
+		&& philo->eat_count >= philo->root->number_of_meals)
+		philo->eat_enought = 1;
 	pthread_mutex_unlock(&philo->eating);
 	my_usleep(philo->root->time_to_eat);
-	if (philo->id % 2 == 0)
-	{
-		pthread_mutex_unlock(philo->right);
-		pthread_mutex_unlock(philo->left);
-	}
-	else
-	{
-		pthread_mutex_unlock(philo->left);
-		pthread_mutex_unlock(philo->right);
-	}
-	philo->eat_count++;
+	pthread_mutex_unlock(philo->right);
+	pthread_mutex_unlock(philo->left);
 }
 
 void philo_do_sleep(t_philo *philo)

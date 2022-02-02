@@ -79,7 +79,10 @@ void	print_message(t_philo *philo, char *msg)
 	pthread_mutex_lock(&philo->root->print);
 	if (philo->root->finish == 0)
 	{
-		printf("%d %d %s\n", get_time() - philo->root->start_time, philo->id, msg);
+		if (ft_strcmp(msg, EAT_ENOUGHT) == 0)
+			printf("%s\n", msg);
+		else
+			printf("%d %d %s\n", get_time() - philo->root->start_time, philo->id, msg);
 		if (ft_strcmp(msg, DIE) == 0 || ft_strcmp(msg, EAT_ENOUGHT) == 0)
 			philo->root->finish = 1;
 	}

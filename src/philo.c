@@ -14,15 +14,18 @@
 
 void	free_all(t_root *root)
 {
+	int	i;
+
 	pthread_mutex_destroy(&root->print);
-	while (root->number_of_philo >= 0)
+	i = 0;
+	while (i < root->number_of_philo)
 	{
-		pthread_mutex_destroy(&root->philos[root->number_of_philo].eating);
-		pthread_mutex_destroy(&root->forks[root->number_of_philo]);
-		root->number_of_philo--;
+		pthread_mutex_destroy(&root->philos[i].eating);
+		pthread_mutex_destroy(&root->forks[i]);
+		i++;
 	}
-	free(&root->forks);
-	free(&root->philos);
+	free(root->forks);
+	free(root->philos);
 }
 
 int	main(int argc, char *argv[])
@@ -36,7 +39,7 @@ int	main(int argc, char *argv[])
 	if (create_threads(&root, root.number_of_philo, &philo_life))
 		return (EXIT_FAILURE);
 	philo_master(&root);
-	my_usleep(30000);
+	join_threads(&root, root.number_of_philo, NULL);
 	free_all(&root);
 	return (EXIT_SUCCESS);
 }

@@ -8,6 +8,24 @@
 //			return ((void *)0);
 //		}
 
+uint8_t	they_ate_enought(t_root *root)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (i < root->number_of_philo)
+	{
+		if (root->philos[i].eat_enought == 1)
+			count++;
+		i++;
+	}
+	if (count >= root->number_of_philo)
+		return (1);
+	return (0);
+}
+
 void	philo_master(t_root *root)
 {
 	int	i;
@@ -19,7 +37,13 @@ void	philo_master(t_root *root)
 		if (get_time() > (root->philos[i].last_eat + root->time_to_die))
 		{
 			print_message(&root->philos[i], DIE);
-			root->finish = 1;
+			pthread_mutex_unlock(&root->philos[i].eating);
+			return ;
+		}
+		if (they_ate_enought(root))
+		{
+			print_message(&root->philos[i], EAT_ENOUGHT);
+			pthread_mutex_unlock(&root->philos[i].eating);
 			return ;
 		}
 		pthread_mutex_unlock(&root->philos[i].eating);
@@ -40,5 +64,5 @@ void	*philo_life(void *philo)
 		if (((t_philo *)philo)->root->finish == 1)
 			break ;	
 	}
-	return (philo);
+	return (NULL);
 }

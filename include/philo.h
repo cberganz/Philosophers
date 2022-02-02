@@ -26,6 +26,7 @@ typedef struct s_philo
 	int				id;
 	int				eat_count;
 	int				last_eat;
+	int				eat_enought;
 	pthread_t		thread;
 	pthread_mutex_t	*right;
 	pthread_mutex_t	*left;
@@ -52,7 +53,7 @@ typedef struct s_root
 */
 
 # define DIE "died"
-# define EAT_ENOUGHT "TO CHANGE"
+# define EAT_ENOUGHT "All philosophers ate enought !"
 # define FORK "has taken a fork"
 # define EAT "is eating"
 # define SLEEP "is sleeping"
