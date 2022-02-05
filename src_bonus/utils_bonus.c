@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 06:46:14 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/02 12:42:49 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/05 16:03:26 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	my_usleep(long int timetosleep)
 
 void	print_message(t_philo *philo, char *msg)
 {
-	pthread_mutex_lock(&philo->root->print);
+	sem_wait(main->print_sem);
 	if (philo->root->finish == 0)
 	{
 		if (ft_strcmp(msg, EAT_ENOUGHT) == 0)
@@ -87,5 +87,5 @@ void	print_message(t_philo *philo, char *msg)
 		if (ft_strcmp(msg, DIE) == 0 || ft_strcmp(msg, EAT_ENOUGHT) == 0)
 			philo->root->finish = 1;
 	}
-	pthread_mutex_unlock(&philo->root->print);
+	sem_post(main->print_sem);
 }

@@ -1,30 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_alive.c                                      :+:      :+:    :+:   */
+/*   philo_alive_bonus.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 12:31:45 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/02 13:02:12 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/05 16:06:34 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-uint8_t	they_ate_enought(t_root *root)
+uint8_t	ate_enought(t_root *root) // to modify
 {
 	int	i;
 	int	count;
 
 	i = 0;
 	count = 0;
-	while (i < root->number_of_philo)
-	{
-		if (root->philos[i].eat_enought == 1)
-			count++;
-		i++;
-	}
+	if (root->eat_enought == 1)
+		count++;
 	if (count >= root->number_of_philo)
 		return (1);
 	return (0);
@@ -37,38 +33,35 @@ void	philo_master(t_root *root)
 	i = 0;
 	while (1)
 	{
-		pthread_mutex_lock(&root->philos[i].eating);
-		if (get_time() > (root->philos[i].last_eat + root->time_to_die))
+		pthread_mutex_lock(&root->eating);
+		if (get_time() > (root->last_eat + root->time_to_die))
 		{
-			print_message(&root->philos[i], DIE);
-			pthread_mutex_unlock(&root->philos[i].eating);
+			print_message(&root, DIE);
+			pthread_mutex_unlock(&root->eating);
 			return ;
 		}
-		if (they_ate_enought(root))
+		if (ate_enought(root))  // find way to print only once and close all processes
 		{
-			print_message(&root->philos[i], EAT_ENOUGHT);
-			pthread_mutex_unlock(&root->philos[i].eating);
+			print_message(&root, EAT_ENOUGHT);
+			pthread_mutex_unlock(&root->eating);
 			return ;
 		}
-		pthread_mutex_unlock(&root->philos[i].eating);
-		i++;
-		if (i >= root->number_of_philo)
-			i = 0;
+		pthread_mutex_unlock(&root->eating);
 	}
 }
 
 void	*philo_life(void *arg)
 {
-	t_philo	*philo;
+	t_philo	*root;
 
-	philo = (t_philo *)arg;
+	root = (t_root *)arg;
 	while (1)
 	{
-		philo_do_take_fork(philo);
-		philo_do_eat(philo);
-		philo_do_sleep(philo);
-		philo_do_think(philo);
-		if (philo->root->finish == 1)
+		philo_do_take_fork(root);
+		philo_do_eat(root);
+		philo_do_sleep(root);
+		philo_do_think(root);
+		if (root->finish == 1) // To remove ?
 			break ;
 	}
 	return (NULL);

@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 04:28:26 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/02 13:52:01 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/05 16:02:39 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,13 @@
 # include <string.h>
 # include <sys/time.h>
 
-typedef struct s_philo
-{
-	int				id;
-	int				eat_count;
-	int				last_eat;
-	int				eat_enought;
-	pthread_t		thread;
-	pthread_mutex_t	*right;
-	pthread_mutex_t	*left;
-	pthread_mutex_t	eating;
-	struct s_root	*root;
-}	t_philo;
+# include <signal.h>
+# include <limits.h>
+# include <sys/time.h>
+# include <sys/sem.h>
+# include <semaphore.h>
+# include <sys/types.h>
+# include <sys/wait.h>
 
 typedef struct s_root
 {
@@ -42,10 +37,16 @@ typedef struct s_root
 	int				time_to_sleep;
 	int				number_of_meals;
 	int				start_time;
-	int				finish;
-	pthread_mutex_t	print;
-	pthread_mutex_t	*forks;
-	t_philo			*philos;	
+	uint8_t			finish;
+	sem_t			forks_sem;
+	sem_t			print_sem;
+	pid_t			*forks_pid;
+	int				id;
+	int				eat_count;
+	int				last_eat;
+	int				eat_enought;
+	pthread_t		thread;
+	pthread_mutex_t	eating;
 }	t_root;
 
 /*

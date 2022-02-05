@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.c                                            :+:      :+:    :+:   */
+/*   philo_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 04:32:23 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/02 13:03:17 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/05 16:06:35 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ int	main(int argc, char *argv[])
 
 	if (parse_args(argc, argv, &root))
 		return (EXIT_FAILURE);
-	if (create_mutex(&root, root.number_of_philo))
+	if (init_sem(&root))
 		return (EXIT_FAILURE);
-	if (create_threads(&root, root.number_of_philo, &philo_life))
+	if (create_forks(&root, root.number_of_philo, &philo_master))
 		return (EXIT_FAILURE);
 	philo_master(&root);
 	join_threads(&root, root.number_of_philo, NULL);

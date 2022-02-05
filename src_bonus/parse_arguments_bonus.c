@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parse_arguments.c                                  :+:      :+:    :+:   */
+/*   parse_arguments_bonus.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 05:47:15 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/02 12:41:32 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/05 15:53:08 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int8_t	parse_args(int argc, char **args, t_root *root)
 	root->time_to_sleep = ft_atoi(args[4]);
 	if (root->number_of_philo < 1 || root->time_to_die < 1
 		|| root->time_to_eat < 1 || root->time_to_sleep < 1
-		|| args_are_not_numerical(args))
+		|| args_are_not_numerical(args)) // check if arg > intmax
 	{
 		printf("Error.\nInvalid arguments.\n");
 		return (-3);
@@ -69,6 +69,6 @@ int8_t	parse_args(int argc, char **args, t_root *root)
 		root->number_of_meals = ft_atoi(args[5]);
 	else
 		root->number_of_meals = 0;
-	root->finish = 0;
+	root->finish = 0; // to remove ?
 	return (0);
 }
