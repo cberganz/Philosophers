@@ -6,11 +6,11 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 05:47:15 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/05 15:53:08 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/07 16:16:28 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 /*
 **	Check each argument and return 1 if a non numerical character is found.

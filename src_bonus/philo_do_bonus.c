@@ -6,48 +6,47 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 12:15:42 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/05 16:07:32 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/07 17:36:10 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
-void	philo_do_take_fork(t_philo *philo)
+void	philo_do_take_fork(t_root *root)
 {
-		my_usleep(10);
-		pthread_mutex_lock(philo->left);
-		print_message(philo, FORK);
-		if (philo->root->number_of_philo != 1)
+		sem_wait(root->forks_sem);
+		print_message(root, FORK);
+		if (root->number_of_philo != 1)
 		{
-				pthread_mutex_lock(philo->right);
-				print_message(philo, FORK);
+				sem_wait(root->forks_sem);
+				print_message(root, FORK);
 		}
 		else
-				my_usleep(philo->root->time_to_die);
+				my_usleep(root->time_to_die);
 }
 
-void	philo_do_eat(t_philo *philo)
+void	philo_do_eat(t_root *root)
 {
-		print_message(philo, EAT);
-		pthread_mutex_lock(&philo->eating);
-		philo->last_eat = get_time();
-		philo->eat_count++;
-		if (philo->root->number_of_meals > 0
-			&& philo->eat_count >= philo->root->number_of_meals)
-			philo->eat_enought = 1;
-		pthread_mutex_unlock(&philo->eating);
-		my_usleep(philo->root->time_to_eat);
-		pthread_mutex_unlock(philo->right);
-		pthread_mutex_unlock(philo->left);
+		print_message(root, EAT);
+		pthread_mutex_lock(&root->eating);
+		root->last_eat = get_time();
+		root->eat_count++;
+		if (root->number_of_meals > 0
+			&& root->eat_count >= root->number_of_meals)
+			root->eat_enought = 1;
+		pthread_mutex_unlock(&root->eating);
+		my_usleep(root->time_to_eat);
+		sem_post(root->forks_sem);
+		sem_post(root->forks_sem);
 }
 
-void	philo_do_sleep(t_philo *philo)
+void	philo_do_sleep(t_root *root)
 {
-		print_message(philo, SLEEP);
-		my_usleep(philo->root->time_to_sleep);
+		print_message(root, SLEEP);
+		my_usleep(root->time_to_sleep);
 }
 
-void	philo_do_think(t_philo *philo)
+void	philo_do_think(t_root *root)
 {
-		print_message(philo, THINK);
+		print_message(root, THINK);
 }

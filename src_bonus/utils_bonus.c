@@ -6,11 +6,11 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 06:46:14 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/05 16:03:26 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/07 17:49:57 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 int	ft_atoi(const char *nptr)
 {
@@ -74,18 +74,23 @@ void	my_usleep(long int timetosleep)
 	}
 }
 
-void	print_message(t_philo *philo, char *msg)
+void	print_message(t_root *root, char *msg)
 {
-	sem_wait(main->print_sem);
-	if (philo->root->finish == 0)
+	if (root->finish == 1)
+		return ;
+	sem_wait(root->print_sem);
+	if (root->finish == 0)
 	{
 		if (ft_strcmp(msg, EAT_ENOUGHT) == 0)
 			printf("%s\n", msg);
 		else
-			printf("%d %d %s\n", get_time() - philo->root->start_time,
-				philo->id, msg);
+			printf("%d %d %s\n", get_time() - root->start_time,
+				root->id, msg);
 		if (ft_strcmp(msg, DIE) == 0 || ft_strcmp(msg, EAT_ENOUGHT) == 0)
-			philo->root->finish = 1;
+		{
+			root->finish = 1;
+			return ;
+		}
 	}
-	sem_post(main->print_sem);
+	sem_post(root->print_sem);
 }
