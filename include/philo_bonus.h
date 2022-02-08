@@ -18,18 +18,10 @@
 # include <stdint.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include <string.h>
-# include <sys/time.h>
-
 # include <fcntl.h>
-# include <signal.h>
-# include <limits.h>
-# include <sys/time.h>
-# include <sys/sem.h>
 # include <semaphore.h>
-# include <sys/types.h>
+# include <sys/time.h>
 # include <sys/wait.h>
-# include <sys/stat.h>
 
 typedef struct s_root
 {
@@ -38,6 +30,7 @@ typedef struct s_root
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				number_of_meals;
+	int				eat_enough_count;
 	int				start_time;
 	uint8_t			finish;
 	sem_t			*forks_sem;
@@ -47,9 +40,16 @@ typedef struct s_root
 	int				eat_count;
 	int				last_eat;
 	int				eat_enought;
+	pthread_t		*threads;
 	pthread_t		thread;
 	pthread_mutex_t	eating;
 }	t_root;
+
+typedef struct s_philo
+{
+	int	id;
+	t_root	*root;
+}	t_philo;
 
 /*
 **	Messages
@@ -73,8 +73,9 @@ int8_t	parse_args(int argc, char **args, t_root *root);
 **	Philo life
 */
 
-void	*philo_life(t_root *root);
-void	*philo_master(void *arg);
+void	philo_life(t_root *root);
+void	*parent_master(void *arg);
+void	*child_master(void *arg);
 void	philo_do_take_fork(t_root *root);
 void	philo_do_eat(t_root *root);
 void	philo_do_sleep(t_root *root);
@@ -87,6 +88,7 @@ void	philo_do_think(t_root *root);
 int8_t	create_forks(t_root *root, int nb);
 void	kill_processes(t_root *root, int nb);
 int	init_sem(t_root *root);
+int8_t	create_threads(t_root *root, int nb);
 
 /*
 **	Utils

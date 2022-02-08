@@ -12,11 +12,12 @@
 
 #include "philo_bonus.h"
 
-//void	free_all(t_root *root)
-//{
+void	free_all(t_root *root)
+{
 //	int	i;
-//
-//	pthread_mutex_destroy(&root->print);
+
+	sem_close(root->forks_sem);	
+	sem_close(root->print_sem);	
 //	i = 0;
 //	while (i < root->number_of_philo)
 //	{
@@ -28,7 +29,7 @@
 //		free(root->forks);
 //	if (root->philos)
 //		free(root->philos);
-//}
+}
 
 int	main(int argc, char *argv[])
 {
@@ -40,7 +41,6 @@ int	main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	if (create_forks(&root, root.number_of_philo))
 		return (EXIT_FAILURE);
-	philo_master(&root);
-//	free_all(&root);
+	free_all(&root);
 	return (EXIT_SUCCESS);
 }

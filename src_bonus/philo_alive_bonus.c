@@ -12,24 +12,35 @@
 
 #include "philo_bonus.h"
 
-uint8_t	ate_enought(t_root *root) // to modify
+void	*parent_master(void *arg)
 {
-	int	i;
-	int	count;
+	t_philo	*philo;
+	int			stat;
+	int			i;
 
-	i = 0;
-	count = 0;
-	if (root->eat_enought == 1)
-		count++;
-	if (count >= root->number_of_philo)
-		return (1);
-	return (0);
+	philo = (t_philo *)arg;
+	waitpid(philo->root->forks_pid[philo->id], &stat, WEXITSTATUS(stat));
+	if (stat == 256)
+	{
+//		philo->main->dead = 1;
+		i = 0;
+		while (i < philo->root->number_of_philo)
+		{
+			if (i != philo->id)
+				kill(philo->root->forks_pid[i], SIGKILL);
+			i++;
+		}
+	}
+	else if (stat == 512)
+		philo->root->eat_enough_count++;
+	philo->root->finish = 1;
+	return (NULL);
 }
 
-void	*philo_master(void *arg)
+void	*child_master(void *arg)
 {
-	t_root	*root;
 	int	i;
+	t_root	*root;
 
 	i = 0;
 	root = (t_root *)arg;
@@ -39,21 +50,20 @@ void	*philo_master(void *arg)
 		if (get_time() > (root->last_eat + root->time_to_die))
 		{
 			print_message(root, DIE);
-			pthread_mutex_unlock(&root->eating);
-			return (NULL);
+			exit(1);
+//			pthread_mutex_unlock(&root->eating);
+//			return (NULL);
 		}
-		if (ate_enought(root))  // find way to print only once and close all processes
-		{
-			print_message(root, EAT_ENOUGHT);
-			pthread_mutex_unlock(&root->eating);
-			return (NULL);
-		}
+		if (root->eat_count >= root->number_of_meals)
+			exit(2);
+//			pthread_mutex_unlock(&root->eating);
+//			return (NULL);
 		pthread_mutex_unlock(&root->eating);
 	}
 	return (NULL);
 }
 
-void	*philo_life(t_root *root)
+void	philo_life(t_root *root)
 {
 	while (1)
 	{
@@ -64,5 +74,4 @@ void	*philo_life(t_root *root)
 		if (root->finish == 1) // To remove ?
 			break ;
 	}
-	return ((void *)1);
 }

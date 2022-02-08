@@ -42,17 +42,50 @@ int8_t	create_forks(t_root *root, int nb)
 		if (root->forks_pid[nb] == 0)
 		{
 			init_philo(root, nb);
-			if (pthread_create(&root->thread, NULL, &philo_master, root)
+			if (pthread_create(&root->thread, NULL, &child_master, root)
 				|| pthread_detach(root->thread))
 			{
 				printf("Error at create_forks()");
 				return (-1);
 			}
-			if (philo_life(root)) // Doit etre mis en dehors du while car le process enfant ne connait pas les autres
-				kill_processes(root, root->number_of_philo);
+			philo_life(root);
 		}
-		my_usleep(5);
+//		my_usleep(5); // change position ?
 	}
+	create_threads(root, root->number_of_philo);
+	return (0);
+}
+
+t_philo	*create_philo(t_root *root, int id)
+{
+	t_philo	*philo;
+
+	philo = malloc(sizeof(t_philo));
+	philo->id = id;
+	philo->root = root;
+	return (philo);
+}
+
+int8_t	create_threads(t_root *root, int nb)
+{
+	root->threads = malloc(nb * sizeof(t_root));
+	if (!root->threads)
+	{
+		printf("Malloc() error at create_threads().\n");
+		return (-1);
+	}
+	while (--nb >= 0)
+	{
+		if (pthread_create(&root->threads[nb], NULL, parent_master,
+				(void *)create_philo(root, nb)))
+		{
+			free(root->threads);
+			printf("Error at create_threads() while creating threads.\n");
+			return (-2);
+		}
+	}
+	while (root->finish != 1)
+		;
 	return (0);
 }
 
