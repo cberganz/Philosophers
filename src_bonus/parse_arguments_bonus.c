@@ -46,13 +46,10 @@ static uint8_t	args_are_not_numerical(char **args)
 **	If no number of meals is set by user, its value is set to -1.
 */
 
-int8_t	parse_args(int argc, char **args, t_root *root)
+void	parse_args(int argc, char **args, t_root *root)
 {
 	if (argc < 5 || argc > 6)
-	{
-		printf(USAGE);
-		return (-1);
-	}
+		ft_exit(USAGE_ERR);
 	root->start_time = get_time();
 	root->number_of_philo = ft_atoi(args[1]);
 	root->time_to_die = ft_atoi(args[2]);
@@ -61,14 +58,7 @@ int8_t	parse_args(int argc, char **args, t_root *root)
 	if (root->number_of_philo < 1 || root->time_to_die < 1
 		|| root->time_to_eat < 1 || root->time_to_sleep < 1
 		|| args_are_not_numerical(args)) // check if arg > intmax
-	{
-		printf("Error.\nInvalid arguments.\n");
-		return (-3);
-	}
+		ft_exit(ARGS_ERR);
 	if (args[5] != NULL)
 		root->number_of_meals = ft_atoi(args[5]);
-	else
-		root->number_of_meals = 0;
-	root->finish = 0; // to remove ?
-	return (0);
 }

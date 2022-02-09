@@ -15,6 +15,7 @@
 
 # include <pthread.h>
 # include <stdio.h>
+# include <string.h>
 # include <stdint.h>
 # include <stdlib.h>
 # include <unistd.h>
@@ -22,6 +23,7 @@
 # include <semaphore.h>
 # include <sys/time.h>
 # include <sys/wait.h>
+# include <sys/ipc.h>
 
 typedef struct s_root
 {
@@ -35,6 +37,9 @@ typedef struct s_root
 	uint8_t			finish;
 	sem_t			*forks_sem;
 	sem_t			*print_sem;
+	sem_t			*taking_fork_sem;
+	sem_t			*end_sem;
+	sem_t			*first_sem;
 	pid_t			*forks_pid;
 	int				id;
 	int				eat_count;
@@ -43,11 +48,12 @@ typedef struct s_root
 	pthread_t		*threads;
 	pthread_t		thread;
 	pthread_mutex_t	eating;
+	void			*philo;
 }	t_root;
 
 typedef struct s_philo
 {
-	int	id;
+	int	i;
 	t_root	*root;
 }	t_philo;
 
@@ -61,13 +67,44 @@ typedef struct s_philo
 # define EAT "is eating"
 # define SLEEP "is sleeping"
 # define THINK "is thinking"
+
+/*
+**	EXIT
+*/
+
+# define USAGE_ERR 2
 # define USAGE "Usage : ./philo nb_philo t_die t_eat t_sleep [nb_meals]"
+# define ARGS_ERR 3
+# define ARGS "Error : Invalid arguments."
+# define MALLOC_PHILO_ERR 4
+# define MALLOC_PHILO "Error : malloc() t_philo structures."
+# define MALLOC_THREADS_ERR 5
+# define MALLOC_THREADS "Error : malloc() pthread_t *threads."
+# define MALLOC_FORKSPID_ERR 6
+# define MALLOC_FORKSPID "Error : malloc() pid_t *forks_pid."
+# define FORKSSEM_OPEN_ERR 7
+# define FORKSSEM_OPEN "Error : sem_open() on forks_sem."
+# define PRINTSEM_OPEN_ERR 8
+# define PRINTSEM_OPEN "Error : sem_open() on print_sem."
+# define TAKINGFORKSEM_OPEN_ERR 9
+# define TAKINGFORKSEM_OPEN "Error : sem_open() on taking_fork_sem."
+# define ENDSEM_OPEN_ERR 10
+# define ENDSEM_OPEN "Error : sem_open() on end_sem."
+# define FIRSTSEM_OPEN_ERR 11
+# define FIRSTSEM_OPEN "Error : sem_open() on first_sem."
+# define PTHREAD_CREATE_CHILD_ERR 12
+# define PTHREAD_CREATE_CHILD "Error : pthread_create() on child thread."
+# define PTHREAD_CREATE_PARENT_ERR 13
+# define PTHREAD_CREATE_PARENT "Error : pthread_create() on parent thread."
+
+static const char **error_messages = ((const char *[12]) {USAGE, ARGS, MALLOC_PHILO, MALLOC_THREADS, MALLOC_FORKSPID, FORKSSEM_OPEN, PRINTSEM_OPEN, TAKINGFORKSEM_OPEN, ENDSEM_OPEN, FIRSTSEM_OPEN, PTHREAD_CREATE_CHILD, PTHREAD_CREATE_PARENT});
 
 /*
 **	Parsing
 */
 
-int8_t	parse_args(int argc, char **args, t_root *root);
+void	parse_args(int argc, char **args, t_root *root);
+void	initialize_structures(t_root *root);
 
 /*
 **	Philo life
@@ -85,10 +122,9 @@ void	philo_do_think(t_root *root);
 **	Thread utils
 */	
 
-int8_t	create_forks(t_root *root, int nb);
+void	create_forks(t_root *root, int nb);
 void	kill_processes(t_root *root, int nb);
-int	init_sem(t_root *root);
-int8_t	create_threads(t_root *root, int nb);
+void	create_threads(t_root *root, int nb);
 
 /*
 **	Utils
@@ -98,5 +134,6 @@ int		ft_atoi(const char *nptr);
 int		get_time(void);
 void	print_message(t_root *root, char *msg);
 void	my_usleep(long int timetosleep);
+void	ft_exit(int exit_code);
 
 #endif	

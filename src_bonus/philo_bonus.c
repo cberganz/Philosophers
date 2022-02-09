@@ -14,33 +14,52 @@
 
 void	free_all(t_root *root)
 {
-//	int	i;
-
+	sem_unlink("/forks_sem");
+	sem_unlink("/print_sem");
+	sem_unlink("/taking_fork_sem");
+	sem_unlink("/end_sem");
+	sem_unlink("/first_sem");
 	sem_close(root->forks_sem);	
-	sem_close(root->print_sem);	
-//	i = 0;
-//	while (i < root->number_of_philo)
-//	{
-//		pthread_mutex_destroy(&root->philos[i].eating);
-//		pthread_mutex_destroy(&root->forks[i]);
-//		i++;
-//	}
-//	if (root->forks)
-//		free(root->forks);
-//	if (root->philos)
-//		free(root->philos);
+	sem_close(root->print_sem);
+	sem_close(root->taking_fork_sem);
+	sem_close(root->end_sem);
+	sem_close(root->first_sem);
+	if (root->philo)
+		free(root->philo);
+	if (root->threads)
+		free(root->threads);
+	if (root->forks_pid)
+		free(root->forks_pid);
+}
+
+t_root	*root_ptr(void)
+{
+	static t_root	root;
+
+	return (&root);
+}
+
+void	ft_exit(int exit_code)
+{
+	t_root	*root;
+
+	root = root_ptr();
+	printf("%s\n", error_messages[exit_code - 2]);
+	free_all(root);
+	exit(exit_code);
 }
 
 int	main(int argc, char *argv[])
 {
-	t_root			root;
+	t_root			*root;
 
-	if (parse_args(argc, argv, &root))
-		return (EXIT_FAILURE);
-	if (init_sem(&root))
-		return (EXIT_FAILURE);
-	if (create_forks(&root, root.number_of_philo))
-		return (EXIT_FAILURE);
-	free_all(&root);
+	root = root_ptr();
+	memset(root, 0, sizeof(t_root));
+	parse_args(argc, argv, root);
+	initialize_structures(root);
+	create_forks(root, root->number_of_philo);
+	create_threads(root, root->number_of_philo);
+	sem_wait(root->end_sem);
+	free_all(root);
 	return (EXIT_SUCCESS);
 }

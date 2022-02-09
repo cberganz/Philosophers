@@ -14,6 +14,7 @@
 
 void	philo_do_take_fork(t_root *root)
 {
+		sem_wait(root->taking_fork_sem);
 		sem_wait(root->forks_sem);
 		print_message(root, FORK);
 		if (root->number_of_philo != 1)
@@ -23,18 +24,14 @@ void	philo_do_take_fork(t_root *root)
 		}
 		else
 				my_usleep(root->time_to_die);
+		sem_post(root->taking_fork_sem);
 }
 
 void	philo_do_eat(t_root *root)
 {
 		print_message(root, EAT);
-		pthread_mutex_lock(&root->eating);
 		root->last_eat = get_time();
 		root->eat_count++;
-		if (root->number_of_meals > 0
-			&& root->eat_count >= root->number_of_meals)
-			root->eat_enought = 1;
-		pthread_mutex_unlock(&root->eating);
 		my_usleep(root->time_to_eat);
 		sem_post(root->forks_sem);
 		sem_post(root->forks_sem);
