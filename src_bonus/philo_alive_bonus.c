@@ -20,7 +20,6 @@ void	*parent_master(void *arg)
 
 	philo = (t_philo *)arg;
 	waitpid(philo->root->forks_pid[philo->i], &stat, WEXITSTATUS(stat));
-	sem_wait(philo->root->first_sem);
 	if (stat == 256)
 	{
 		i = 0;
@@ -33,9 +32,32 @@ void	*parent_master(void *arg)
 		sem_post(philo->root->end_sem);
 	}
 	else if (stat == 512)
-		return (NULL);
-		//philo->root->eat_enough_count++;
+	{
+		philo->root->eat_enough_count++;
+		if (philo->root->eat_enough_count >= philo->root->number_of_philo)
+		{
+			philo->root->eat_enought = 1;
+			sem_post(philo->root->end_sem);
+		}
+	}
 	return (NULL);
+}
+
+void	free_child(t_root *root)
+{
+	my_usleep(root->time_to_die);
+	if (pthread_join(root->thread, NULL))
+		ft_exit(PTHREAD_JOIN_ERR);
+	sem_close(root->forks_sem);
+	sem_close(root->taking_fork_sem);
+	sem_close(root->end_sem);
+	sem_close(root->print_sem);
+	if (root->philo)
+		free(root->philo);
+	if (root->threads)
+		free(root->threads);
+	if (root->forks_pid)
+		free(root->forks_pid);
 }
 
 void	*child_master(void *arg)
@@ -49,27 +71,30 @@ void	*child_master(void *arg)
 	{
 		if (get_time() >= (root->last_eat + root->time_to_die))
 		{
-			print_message(root, DIE);
+			free_child(root);
 			exit(1);
 		}
-		if (root->number_of_meals > 0 && root->eat_count >= root->number_of_meals)
+		if (root->eat_enought)
+		{
+			free_child(root);
 			exit(2);
+		}
 		my_usleep(5);
 	}
 	return (NULL);
 }
 
-void	philo_life(t_root *root)
+void	*philo_life(void *arg)
 {
-//	root->eating_sem = sem_open("eating_sem", O_CREAT, 0600, 1);
-	//sem_init(root->eating_sem, 0, 1); // Pas autorisé
-//	if (root->eating_sem == SEM_FAILED)
-//		return ;
-	while (1)
+	t_root	*root;
+
+	root = (t_root *)arg;
+	while (root->finish != 1 && root->eat_enought != 1)
 	{
 		philo_do_take_fork(root);
 		philo_do_eat(root);
 		philo_do_sleep(root);
 		philo_do_think(root);
 	}
+	return (NULL);
 }

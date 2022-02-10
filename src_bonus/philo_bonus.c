@@ -18,12 +18,10 @@ void	free_all(t_root *root)
 	sem_unlink("/print_sem");
 	sem_unlink("/taking_fork_sem");
 	sem_unlink("/end_sem");
-	sem_unlink("/first_sem");
 	sem_close(root->forks_sem);	
 	sem_close(root->print_sem);
 	sem_close(root->taking_fork_sem);
 	sem_close(root->end_sem);
-	sem_close(root->first_sem);
 	if (root->philo)
 		free(root->philo);
 	if (root->threads)
@@ -60,6 +58,9 @@ int	main(int argc, char *argv[])
 	create_forks(root, root->number_of_philo);
 	create_threads(root, root->number_of_philo);
 	sem_wait(root->end_sem);
+	my_usleep(100);
+	if (root->eat_enought)
+		printf(EAT_ENOUGHT);
 	free_all(root);
 	return (EXIT_SUCCESS);
 }

@@ -34,12 +34,11 @@ typedef struct s_root
 	int				number_of_meals;
 	int				eat_enough_count;
 	int				start_time;
-	uint8_t			finish;
+	int				finish;
 	sem_t			*forks_sem;
 	sem_t			*print_sem;
 	sem_t			*taking_fork_sem;
 	sem_t			*end_sem;
-	sem_t			*first_sem;
 	pid_t			*forks_pid;
 	int				id;
 	int				eat_count;
@@ -62,7 +61,7 @@ typedef struct s_philo
 */
 
 # define DIE "died"
-# define EAT_ENOUGHT "All philosophers ate enought !"
+# define EAT_ENOUGHT "All philosophers ate enough !"
 # define FORK "has taken a fork"
 # define EAT "is eating"
 # define SLEEP "is sleeping"
@@ -90,14 +89,14 @@ typedef struct s_philo
 # define TAKINGFORKSEM_OPEN "Error : sem_open() on taking_fork_sem."
 # define ENDSEM_OPEN_ERR 10
 # define ENDSEM_OPEN "Error : sem_open() on end_sem."
-# define FIRSTSEM_OPEN_ERR 11
-# define FIRSTSEM_OPEN "Error : sem_open() on first_sem."
-# define PTHREAD_CREATE_CHILD_ERR 12
+# define PTHREAD_CREATE_CHILD_ERR 11
 # define PTHREAD_CREATE_CHILD "Error : pthread_create() on child thread."
-# define PTHREAD_CREATE_PARENT_ERR 13
+# define PTHREAD_CREATE_PARENT_ERR 12
 # define PTHREAD_CREATE_PARENT "Error : pthread_create() on parent thread."
+# define PTHREAD_JOIN_ERR 13
+# define PTHREAD_JOIN "Error : pthread_join() on child thread."
 
-static const char **error_messages = ((const char *[12]) {USAGE, ARGS, MALLOC_PHILO, MALLOC_THREADS, MALLOC_FORKSPID, FORKSSEM_OPEN, PRINTSEM_OPEN, TAKINGFORKSEM_OPEN, ENDSEM_OPEN, FIRSTSEM_OPEN, PTHREAD_CREATE_CHILD, PTHREAD_CREATE_PARENT});
+static const char **error_messages = ((const char *[12]) {USAGE, ARGS, MALLOC_PHILO, MALLOC_THREADS, MALLOC_FORKSPID, FORKSSEM_OPEN, PRINTSEM_OPEN, TAKINGFORKSEM_OPEN, ENDSEM_OPEN, PTHREAD_CREATE_CHILD, PTHREAD_CREATE_PARENT, PTHREAD_JOIN});
 
 /*
 **	Parsing
@@ -110,7 +109,7 @@ void	initialize_structures(t_root *root);
 **	Philo life
 */
 
-void	philo_life(t_root *root);
+void	*philo_life(void *arg);
 void	*parent_master(void *arg);
 void	*child_master(void *arg);
 void	philo_do_take_fork(t_root *root);
@@ -135,5 +134,6 @@ int		get_time(void);
 void	print_message(t_root *root, char *msg);
 void	my_usleep(long int timetosleep);
 void	ft_exit(int exit_code);
+void	free_all(t_root *root);
 
 #endif	

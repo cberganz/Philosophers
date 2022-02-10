@@ -55,10 +55,10 @@ void	parse_args(int argc, char **args, t_root *root)
 	root->time_to_die = ft_atoi(args[2]);
 	root->time_to_eat = ft_atoi(args[3]);
 	root->time_to_sleep = ft_atoi(args[4]);
-	if (root->number_of_philo < 1 || root->time_to_die < 1
-		|| root->time_to_eat < 1 || root->time_to_sleep < 1
-		|| args_are_not_numerical(args)) // check if arg > intmax
-		ft_exit(ARGS_ERR);
 	if (args[5] != NULL)
 		root->number_of_meals = ft_atoi(args[5]);
+	if (root->number_of_philo < 1 || root->time_to_die < 1
+		|| root->time_to_eat < 1 || root->time_to_sleep < 1
+		|| root->number_of_meals < 1 || args_are_not_numerical(args)) // check if arg > intmax
+		ft_exit(ARGS_ERR);
 }
