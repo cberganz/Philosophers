@@ -36,15 +36,19 @@ void	philo_do_eat(t_root *root)
 		if (root->finish == 1 || root->eat_enought == 1)
 			return ;
 		print_message(root, EAT);
+		sem_wait(root->eating_sem);
 		root->last_eat = get_time();
 		root->eat_count++;
+		sem_post(root->eating_sem);
 		my_usleep(root->time_to_eat);
 		sem_post(root->forks_sem);
 		sem_post(root->forks_sem);
+		sem_wait(root->eating_sem);
 		if (get_time() >= (root->last_eat + root->time_to_die))
 			print_message(root, DIE);		
 		if (root->number_of_meals > 0 && root->eat_count >= root->number_of_meals)
 			root->eat_enought = 1;
+		sem_post(root->eating_sem);
 }
 
 void	philo_do_sleep(t_root *root)

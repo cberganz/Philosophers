@@ -23,7 +23,6 @@ void	philo_do_take_fork(t_philo *philo)
 	}
 	else
 	{
-		my_usleep(10);
 		pthread_mutex_lock(philo->left);
 		print_message(philo, FORK);
 		if (philo->root->number_of_philo != 1)
@@ -44,11 +43,16 @@ void	philo_do_eat(t_philo *philo)
 	philo->eat_count++;
 	if (philo->root->number_of_meals > 0
 		&& philo->eat_count >= philo->root->number_of_meals)
+	{
+		pthread_mutex_lock(&philo->root->eat_enough_mut);
 		philo->eat_enought = 1;
+		pthread_mutex_unlock(&philo->root->eat_enough_mut);
+	}
 	pthread_mutex_unlock(&philo->eating);
 	my_usleep(philo->root->time_to_eat);
 	pthread_mutex_unlock(philo->right);
-	pthread_mutex_unlock(philo->left);
+	if (philo->root->number_of_philo != 1)
+		pthread_mutex_unlock(philo->left);
 }
 
 void	philo_do_sleep(t_philo *philo)

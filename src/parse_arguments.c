@@ -64,7 +64,7 @@ int8_t	parse_args(int argc, char **args, t_root *root)
 		root->number_of_meals = 0;
 	if (root->number_of_philo < 1 || root->time_to_die < 1
 		|| root->time_to_eat < 1 || root->time_to_sleep < 1
-		|| root->number_of_meals < 1|| args_are_not_numerical(args)) //check if arg > intmax
+		|| (args[5] && root->number_of_meals < 1) || args_are_not_numerical(args)) //check if arg > intmax
 	{
 		printf("Error.\nInvalid arguments.\n");
 		return (-3);

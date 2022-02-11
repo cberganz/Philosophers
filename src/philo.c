@@ -17,6 +17,8 @@ void	free_all(t_root *root)
 	int	i;
 
 	pthread_mutex_destroy(&root->print);
+	pthread_mutex_destroy(&root->eat_enough_mut);
+	pthread_mutex_destroy(&root->finish_mut);
 	i = 0;
 	while (i < root->number_of_philo)
 	{
@@ -41,7 +43,7 @@ int	main(int argc, char *argv[])
 	if (create_threads(&root, root.number_of_philo, &philo_life))
 		return (EXIT_FAILURE);
 	philo_master(&root);
-	join_threads(&root, root.number_of_philo, NULL);
+	join_threads(&root, root.number_of_philo);
 	free_all(&root);
 	return (EXIT_SUCCESS);
 }

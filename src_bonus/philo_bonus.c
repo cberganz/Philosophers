@@ -17,11 +17,11 @@ void	free_all(t_root *root)
 	sem_unlink("/forks_sem");
 	sem_unlink("/print_sem");
 	sem_unlink("/taking_fork_sem");
-	sem_unlink("/end_sem");
+	sem_unlink("/eating_sem");
 	sem_close(root->forks_sem);	
 	sem_close(root->print_sem);
 	sem_close(root->taking_fork_sem);
-	sem_close(root->end_sem);
+	sem_close(root->eating_sem);
 	if (root->philo)
 		free(root->philo);
 	if (root->threads)
@@ -50,15 +50,17 @@ void	ft_exit(int exit_code)
 int	main(int argc, char *argv[])
 {
 	t_root			*root;
+	int				i;
 
 	root = root_ptr();
 	memset(root, 0, sizeof(t_root));
 	parse_args(argc, argv, root);
 	initialize_structures(root);
+	i = root->number_of_philo;
 	create_forks(root, root->number_of_philo);
 	create_threads(root, root->number_of_philo);
-	sem_wait(root->end_sem);
-	my_usleep(100);
+	while (--i >= 0)
+		pthread_join(root->threads[i], NULL);
 	if (root->eat_enought)
 		printf(EAT_ENOUGHT);
 	free_all(root);

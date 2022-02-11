@@ -40,6 +40,7 @@ int8_t	create_threads(t_root *root, int nb, void *(*func_ptr)(void *))
 	if (!root->philos)
 	{
 		printf("Malloc() error at create_threads().\n");
+		free(root->forks);
 		return (-1);
 	}
 	while (--nb >= 0)
@@ -49,6 +50,7 @@ int8_t	create_threads(t_root *root, int nb, void *(*func_ptr)(void *))
 				(void *)&root->philos[nb]))
 		{
 			free(root->philos);
+			free(root->forks);
 			printf("Error at create_threads() while creating threads.\n");
 			return (-2);
 		}
@@ -63,19 +65,17 @@ int8_t	create_threads(t_root *root, int nb, void *(*func_ptr)(void *))
 **	The array returned is NULL terminated so it require nb + 1 sized.
 */
 
-void	**join_threads(t_root *root, int nb, void **ret)
+int8_t	join_threads(t_root *root, int nb)
 {
-	if (ret)
-		ret[nb] = NULL;
 	while (--nb >= 0)
 	{
-		if (pthread_join(root->philos[nb].thread, ret))
+		if (pthread_join(root->philos[nb].thread, NULL))
 		{
 			printf("Error while joining threads.\n");
-			return (NULL);
+			return (-1);
 		}
 	}
-	return (ret);
+	return (0);
 }
 
 /*
@@ -86,9 +86,7 @@ void	**join_threads(t_root *root, int nb, void **ret)
 
 int8_t	create_mutex(t_root *root, int nb)
 {
-	root->finish = 0;
 	root->forks = malloc(nb * sizeof(pthread_mutex_t));
-	memset(root->forks, 0, sizeof(pthread_mutex_t) * root->number_of_philo);
 	if (!root->forks)
 	{
 		printf("Malloc() error at create_mutex().\n");
@@ -97,5 +95,7 @@ int8_t	create_mutex(t_root *root, int nb)
 	while (--nb >= 0)
 		pthread_mutex_init(&root->forks[nb], NULL);
 	pthread_mutex_init(&root->print, NULL);
+	pthread_mutex_init(&root->finish_mut, NULL);
+	pthread_mutex_init(&root->eat_enough_mut, NULL);
 	return (0);
 }

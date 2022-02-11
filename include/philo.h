@@ -44,6 +44,8 @@ typedef struct s_root
 	int				start_time;
 	int				finish;
 	pthread_mutex_t	print;
+	pthread_mutex_t	eat_enough_mut;
+	pthread_mutex_t	finish_mut;
 	pthread_mutex_t	*forks;
 	t_philo			*philos;	
 }	t_root;
@@ -83,7 +85,7 @@ void	philo_do_die(t_philo *philo);
 */	
 
 int8_t	create_threads(t_root *root, int nb, void *(*func_ptr)(void *));
-void	**join_threads(t_root *root, int nb, void **ret);
+int8_t	join_threads(t_root *root, int nb);
 int8_t	create_mutex(t_root *root, int nb);
 void	destroy_mutex(pthread_mutex_t *forks, int nb);
 

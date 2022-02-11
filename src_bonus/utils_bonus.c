@@ -81,16 +81,11 @@ void	print_message(t_root *root, char *msg)
 	sem_wait(root->print_sem);
 	if (root->finish == 0)
 	{
-		if (ft_strcmp(msg, EAT_ENOUGHT) == 0)
-			printf("%s\n", msg);
-		else
-			printf("%d %d %s\n", get_time() - root->start_time,
-				root->id, msg);
-		if (ft_strcmp(msg, DIE) == 0 || ft_strcmp(msg, EAT_ENOUGHT) == 0)
+		printf("%d %d %s\n", get_time() - root->start_time, root->id, msg);
+		if (ft_strcmp(msg, DIE) == 0)
 		{
 			root->finish = 1;
-			if (ft_strcmp(msg, DIE) == 0)
-				return ;
+			return ;
 		}
 	}
 	sem_post(root->print_sem);

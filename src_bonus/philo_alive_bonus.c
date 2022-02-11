@@ -29,29 +29,26 @@ void	*parent_master(void *arg)
 				kill(philo->root->forks_pid[i], SIGKILL);
 			i++;
 		}
-		sem_post(philo->root->end_sem);
 	}
 	else if (stat == 512)
 	{
+		sem_wait(philo->root->eating_sem);
 		philo->root->eat_enough_count++;
 		if (philo->root->eat_enough_count >= philo->root->number_of_philo)
-		{
 			philo->root->eat_enought = 1;
-			sem_post(philo->root->end_sem);
-		}
+		sem_post(philo->root->eating_sem);
 	}
 	return (NULL);
 }
 
 void	free_child(t_root *root)
 {
-	my_usleep(root->time_to_die);
 	if (pthread_join(root->thread, NULL))
 		ft_exit(PTHREAD_JOIN_ERR);
 	sem_close(root->forks_sem);
 	sem_close(root->taking_fork_sem);
-	sem_close(root->end_sem);
 	sem_close(root->print_sem);
+	sem_close(root->eating_sem);
 	if (root->philo)
 		free(root->philo);
 	if (root->threads)
@@ -69,16 +66,20 @@ void	*child_master(void *arg)
 	root = (t_root *)arg;
 	while (1)
 	{
+		sem_wait(root->eating_sem);
 		if (get_time() >= (root->last_eat + root->time_to_die))
 		{
+			sem_post(root->eating_sem);
 			free_child(root);
 			exit(1);
 		}
 		if (root->eat_enought)
 		{
+			sem_post(root->eating_sem);
 			free_child(root);
 			exit(2);
 		}
+		sem_post(root->eating_sem);
 		my_usleep(5);
 	}
 	return (NULL);

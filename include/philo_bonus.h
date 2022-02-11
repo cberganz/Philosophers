@@ -39,6 +39,7 @@ typedef struct s_root
 	sem_t			*print_sem;
 	sem_t			*taking_fork_sem;
 	sem_t			*end_sem;
+	sem_t			*eating_sem;
 	pid_t			*forks_pid;
 	int				id;
 	int				eat_count;
@@ -87,8 +88,8 @@ typedef struct s_philo
 # define PRINTSEM_OPEN "Error : sem_open() on print_sem."
 # define TAKINGFORKSEM_OPEN_ERR 9
 # define TAKINGFORKSEM_OPEN "Error : sem_open() on taking_fork_sem."
-# define ENDSEM_OPEN_ERR 10
-# define ENDSEM_OPEN "Error : sem_open() on end_sem."
+# define EATINGSEM_OPEN_ERR 10
+# define EATINGSEM_OPEN "Error : sem_open() on eating_sem."
 # define PTHREAD_CREATE_CHILD_ERR 11
 # define PTHREAD_CREATE_CHILD "Error : pthread_create() on child thread."
 # define PTHREAD_CREATE_PARENT_ERR 12
@@ -96,7 +97,7 @@ typedef struct s_philo
 # define PTHREAD_JOIN_ERR 13
 # define PTHREAD_JOIN "Error : pthread_join() on child thread."
 
-static const char **error_messages = ((const char *[12]) {USAGE, ARGS, MALLOC_PHILO, MALLOC_THREADS, MALLOC_FORKSPID, FORKSSEM_OPEN, PRINTSEM_OPEN, TAKINGFORKSEM_OPEN, ENDSEM_OPEN, PTHREAD_CREATE_CHILD, PTHREAD_CREATE_PARENT, PTHREAD_JOIN});
+static const char **error_messages = ((const char *[12]) {USAGE, ARGS, MALLOC_PHILO, MALLOC_THREADS, MALLOC_FORKSPID, FORKSSEM_OPEN, PRINTSEM_OPEN, TAKINGFORKSEM_OPEN, EATINGSEM_OPEN, PTHREAD_CREATE_CHILD, PTHREAD_CREATE_PARENT, PTHREAD_JOIN});
 
 /*
 **	Parsing

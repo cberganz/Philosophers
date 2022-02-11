@@ -1,4 +1,5 @@
 /* ************************************************************************** */
+
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   philo_alive.c                                      :+:      :+:    :+:   */
@@ -19,12 +20,14 @@ uint8_t	they_ate_enought(t_root *root)
 
 	i = 0;
 	count = 0;
+	pthread_mutex_lock(&root->eat_enough_mut);
 	while (i < root->number_of_philo)
 	{
 		if (root->philos[i].eat_enought == 1)
 			count++;
 		i++;
 	}
+	pthread_mutex_unlock(&root->eat_enough_mut);
 	if (count >= root->number_of_philo)
 		return (1);
 	return (0);
@@ -38,7 +41,7 @@ void	philo_master(t_root *root)
 	while (1)
 	{
 		pthread_mutex_lock(&root->philos[i].eating);
-		if (get_time() > (root->philos[i].last_eat + root->time_to_die))
+		if (get_time() >= (root->philos[i].last_eat + root->time_to_die))
 		{
 			print_message(&root->philos[i], DIE);
 			pthread_mutex_unlock(&root->philos[i].eating);
@@ -62,14 +65,21 @@ void	*philo_life(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
+	if (philo->id % 2 == 0)
+		my_usleep(5);
 	while (1)
 	{
 		philo_do_take_fork(philo);
 		philo_do_eat(philo);
 		philo_do_sleep(philo);
 		philo_do_think(philo);
+		pthread_mutex_lock(&philo->root->finish_mut);
 		if (philo->root->finish == 1)
+		{
+			pthread_mutex_unlock(&philo->root->finish_mut);
 			break ;
+		}
+		pthread_mutex_unlock(&philo->root->finish_mut);
 	}
 	return (NULL);
 }
