@@ -13,44 +13,97 @@
 #include "philo_bonus.h"
 
 /*
-**	Check each argument and return 1 if a non numerical character is found.
+**	Check that every argument is an int.
+**	return 0 if all arguments are valid.
 */
 
-static uint8_t	args_are_not_numerical(char **args)
+static int8_t	args_not_int(char **s, int i)
 {
-	int	i;
-	int	j;
+	long long	result;
+	int			sign;
 
-	i = 1;
-	while (args[i])
+	while (s[++i])
 	{
-		j = 0;
-		if (args[i][j] == '\0')
+		result = 0;
+		sign = 1;
+		if (*s[i] == '\0')
 			return (1);
-		while (args[i][j])
+		if (*s[i] == '+' || *s[i] == '-')
 		{
-			if (args[i][j] < '0' || args[i][j] > '9')
-				return (1);
-			j++;
+			if (*s[i] == '-')
+				sign = -1;
+			s[i]++;
 		}
-		i++;
+		while (*s[i] >= '0' && *s[i] <= '9')
+		{
+			result = (result * 10) + (*s[i] - '0');
+			s[i]++;
+		}
+		if ((result * sign) < INT_MIN || (result * sign) > INT_MAX
+				|| *s[i] != '\0')
+			return (1);
 	}
 	return (0);
 }
 
 /*
-**	Initialize the t_philo structure with the values given by user.
-**	Print error message and return -1 in case of an invalid number of arguments.
-**	Print error message and return -2 if any argument is not valid.
-**	Print error message and return -3 if any argument is above 1.
-**	If no number of meals is set by user, its value is set to -1.
+**	Open the different semaphores needed by the program.
+**	Semaphores are previously unlinked to prevent from previous use.
+**	forks_sem works as token for avaliable forks.
+**	print_sem locks the print_message() function.
+**	Both are created in shared memory.
 */
 
-void	parse_args(int argc, char **args, t_root *root)
+static void	initialize_semaphores(t_root *root)
+{
+	sem_unlink("/forks_sem");
+	sem_unlink("/print_sem");
+	sem_unlink("/taking_fork_sem");
+	sem_unlink("/eating_sem");
+	root->forks_sem = sem_open("/forks_sem", O_CREAT | O_EXCL, 0660, root->number_of_philo);
+	if (root->forks_sem == SEM_FAILED)
+		ft_exit(FORKSSEM_OPEN_ERR, root);
+	root->print_sem = sem_open("/print_sem", O_CREAT | O_EXCL, 0660, 1);
+	if (root->print_sem == SEM_FAILED)
+		ft_exit(PRINTSEM_OPEN_ERR, root);
+	root->taking_fork_sem = sem_open("/taking_fork_sem", O_CREAT | O_EXCL, 0600, 1);
+	if (root->taking_fork_sem == SEM_FAILED)
+		ft_exit(TAKINGFORKSEM_OPEN_ERR, root);
+	root->eating_sem = sem_open("/eating_sem", O_CREAT | O_EXCL, 0600, 1);
+	if (root->eating_sem == SEM_FAILED)
+		ft_exit(EATINGSEM_OPEN_ERR, root);
+}
+
+/*
+**	Allocate heap memory for root members.
+**	Error message printed and program properly exited in case of invalid args.
+*/
+
+static void	allocate_memory(t_root *root)
+{
+	root->philo = malloc(root->number_of_philo * sizeof(t_philo));
+	if (!root->philo)
+		ft_exit(MALLOC_PHILO_ERR, root);
+	root->threads = malloc(root->number_of_philo * sizeof(pthread_t));
+	if (!root->threads)
+		ft_exit(MALLOC_THREADS_ERR, root);
+	root->forks_pid = malloc(root->number_of_philo * sizeof(pid_t));
+	if (!root->forks_pid)
+		ft_exit(MALLOC_FORKSPID_ERR, root);
+	initialize_semaphores(root);
+}
+
+/*
+**	Initialize the t_root structure with the values given by user.
+**	Error message printed and program properly exited in case of invalid args.
+*/
+
+void	parse_arguments(int argc, char **args, t_root *root)
 {
 	if (argc < 5 || argc > 6)
-		ft_exit(USAGE_ERR);
+		ft_exit(USAGE_ERR, root);
 	root->start_time = get_time();
+	root->last_eat = root->start_time;
 	root->number_of_philo = ft_atoi(args[1]);
 	root->time_to_die = ft_atoi(args[2]);
 	root->time_to_eat = ft_atoi(args[3]);
@@ -58,7 +111,9 @@ void	parse_args(int argc, char **args, t_root *root)
 	if (args[5] != NULL)
 		root->number_of_meals = ft_atoi(args[5]);
 	if (root->number_of_philo < 1 || root->time_to_die < 1
-		|| root->time_to_eat < 1 || root->time_to_sleep < 1
-		|| (args[5] && root->number_of_meals < 1) || args_are_not_numerical(args)) // check if arg > intmax
-		ft_exit(ARGS_ERR);
+			|| root->time_to_eat < 1 || root->time_to_sleep < 1
+			|| (args[5] && root->number_of_meals < 1)
+			|| args_not_int(args, 0))
+		ft_exit(ARGS_ERR, root);
+	allocate_memory(root);
 }

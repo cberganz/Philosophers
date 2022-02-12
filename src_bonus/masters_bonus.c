@@ -12,6 +12,13 @@
 
 #include "philo_bonus.h"
 
+/*
+**	Launched by the main process as a thread. Wait for a child process to exit.
+**	It has to be launched once for each child process.
+**	If the child exit code is 1 (case 256), every other child is killed.
+**	If the child exit code is 2 (case 512), eat_enough_count is incremented.
+*/
+
 void	*parent_master(void *arg)
 {
 	t_philo	*philo;
@@ -35,27 +42,20 @@ void	*parent_master(void *arg)
 		sem_wait(philo->root->eating_sem);
 		philo->root->eat_enough_count++;
 		if (philo->root->eat_enough_count >= philo->root->number_of_philo)
-			philo->root->eat_enought = 1;
+			philo->root->eat_enough = 1;
 		sem_post(philo->root->eating_sem);
 	}
 	return (NULL);
 }
 
-void	free_child(t_root *root)
-{
-	if (pthread_join(root->thread, NULL))
-		ft_exit(PTHREAD_JOIN_ERR);
-	sem_close(root->forks_sem);
-	sem_close(root->taking_fork_sem);
-	sem_close(root->print_sem);
-	sem_close(root->eating_sem);
-	if (root->philo)
-		free(root->philo);
-	if (root->threads)
-		free(root->threads);
-	if (root->forks_pid)
-		free(root->forks_pid);
-}
+/*
+**	Launched by the main thread of a child process to check for his philosopher
+**	death or eat_enough.
+**	Variables are protected by eating semaphore when the philosopher is eating.
+**	If the philosopher died, performs a clean exit whith exit code 1.
+**	If the philosopher ate enough, performs a clean exit whith exit code 2.
+**	parent_master() function then handle the exit statut.
+*/
 
 void	*child_master(void *arg)
 {
@@ -73,7 +73,7 @@ void	*child_master(void *arg)
 			free_child(root);
 			exit(1);
 		}
-		if (root->eat_enought)
+		if (root->eat_enough)
 		{
 			sem_post(root->eating_sem);
 			free_child(root);
@@ -81,21 +81,6 @@ void	*child_master(void *arg)
 		}
 		sem_post(root->eating_sem);
 		my_usleep(5);
-	}
-	return (NULL);
-}
-
-void	*philo_life(void *arg)
-{
-	t_root	*root;
-
-	root = (t_root *)arg;
-	while (root->finish != 1 && root->eat_enought != 1)
-	{
-		philo_do_take_fork(root);
-		philo_do_eat(root);
-		philo_do_sleep(root);
-		philo_do_think(root);
 	}
 	return (NULL);
 }

@@ -14,7 +14,7 @@
 
 void	philo_do_take_fork(t_root *root)
 {
-		if (root->finish == 1 || root->eat_enought == 1)
+		if (root->finish == 1 || root->eat_enough == 1)
 			return ;
 		sem_wait(root->taking_fork_sem);
 		sem_wait(root->forks_sem);
@@ -33,7 +33,7 @@ void	philo_do_take_fork(t_root *root)
 
 void	philo_do_eat(t_root *root)
 {
-		if (root->finish == 1 || root->eat_enought == 1)
+		if (root->finish == 1 || root->eat_enough == 1)
 			return ;
 		print_message(root, EAT);
 		sem_wait(root->eating_sem);
@@ -46,14 +46,15 @@ void	philo_do_eat(t_root *root)
 		sem_wait(root->eating_sem);
 		if (get_time() >= (root->last_eat + root->time_to_die))
 			print_message(root, DIE);		
-		if (root->number_of_meals > 0 && root->eat_count >= root->number_of_meals)
-			root->eat_enought = 1;
+		if (root->number_of_meals > 0
+			&& root->eat_count >= root->number_of_meals)
+			root->eat_enough = 1;
 		sem_post(root->eating_sem);
 }
 
 void	philo_do_sleep(t_root *root)
 {
-		if (root->finish == 1 || root->eat_enought == 1)
+		if (root->finish == 1 || root->eat_enough == 1)
 			return ;
 		print_message(root, SLEEP);
 		my_usleep(root->time_to_sleep);
@@ -63,7 +64,22 @@ void	philo_do_sleep(t_root *root)
 
 void	philo_do_think(t_root *root)
 {
-		if (root->finish == 1 || root->eat_enought == 1)
+		if (root->finish == 1 || root->eat_enough == 1)
 			return ;
 		print_message(root, THINK);
+}
+
+void	*philo_life(void *arg)
+{
+	t_root	*root;
+
+	root = (t_root *)arg;
+	while (root->finish != 1 && root->eat_enough != 1)
+	{
+		philo_do_take_fork(root);
+		philo_do_eat(root);
+		philo_do_sleep(root);
+		philo_do_think(root);
+	}
+	return (NULL);
 }

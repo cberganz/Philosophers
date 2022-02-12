@@ -13,27 +13,35 @@
 #include "philo.h"
 
 /*
-**	Check each argument and return 1 if a non numerical character is found.
+**	Check that every argument is an int.
+**	return 0 if all arguments are valid.
 */
 
-static uint8_t	args_are_not_numerical(char **args)
+static int8_t	args_not_int(char **s, int i)
 {
-	int	i;
-	int	j;
+	long long	result;
+	int			sign;
 
-	i = 1;
-	while (args[i])
+	while (s[++i])
 	{
-		j = 0;
-		if (args[i][j] == '\0')
+		result = 0;
+		sign = 1;
+		if (*s[i] == '\0')
 			return (1);
-		while (args[i][j])
+		if (*s[i] == '+' || *s[i] == '-')
 		{
-			if (args[i][j] < '0' || args[i][j] > '9')
-				return (1);
-			j++;
+			if (*s[i] == '-')
+				sign = -1;
+			s[i]++;
 		}
-		i++;
+		while (*s[i] >= '0' && *s[i] <= '9')
+		{
+			result = (result * 10) + (*s[i] - '0');
+			s[i]++;
+		}
+		if ((result * sign) < INT_MIN || (result * sign) > INT_MAX
+				|| *s[i] != '\0')
+			return (1);
 	}
 	return (0);
 }
@@ -64,9 +72,9 @@ int8_t	parse_args(int argc, char **args, t_root *root)
 		root->number_of_meals = 0;
 	if (root->number_of_philo < 1 || root->time_to_die < 1
 		|| root->time_to_eat < 1 || root->time_to_sleep < 1
-		|| (args[5] && root->number_of_meals < 1) || args_are_not_numerical(args)) //check if arg > intmax
+		|| (args[5] && root->number_of_meals < 1) || args_not_int(args, 0))
 	{
-		printf("Error.\nInvalid arguments.\n");
+		printf("Error : Invalid arguments.\n");
 		return (-3);
 	}
 	root->finish = 0;

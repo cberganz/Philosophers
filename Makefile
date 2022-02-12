@@ -23,7 +23,7 @@ HEADER_BONUS= $(INCLUDE)philo_bonus.h
 
 CC			= clang
 
-CFLAGS		= -Wall -Wextra -Werror -O3 #-fsanitize=thread
+CFLAGS		= -Wall -Wextra -Werror -fsanitize=thread -g3
 
 SRC_FILES =	philo.c						\
 			philo_alive.c				\
@@ -32,11 +32,12 @@ SRC_FILES =	philo.c						\
 			utils.c						\
 			parse_arguments.c
 
-SRC_BONUS_FILES =	philo_bonus.c			\
-					philo_alive_bonus.c		\
+SRC_BONUS_FILES =	main_bonus.c			\
+					masters_bonus.c			\
 		  			philo_do_bonus.c		\
 					utils_forking_bonus.c	\
 					utils_bonus.c			\
+					exit_bonus.c			\
 					parse_arguments_bonus.c
 
 SRC_DIR		= src/
@@ -58,10 +59,10 @@ all: $(NAME)
 bonus: $(NAME_BONUS)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME) -pthread -g3
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME) -pthread
 
 $(NAME_BONUS): $(OBJ_BONUS)
-	$(CC) $(CFLAGS) $(OBJ_BONUS) -o $(NAME_BONUS) -pthread -g3
+	$(CC) $(CFLAGS) $(OBJ_BONUS) -o $(NAME_BONUS) -pthread
 
 $(OBJ_DIR):
 	mkdir -p $@
@@ -72,10 +73,10 @@ $(OBJ): | $(OBJ_DIR)
 $(OBJ_BONUS): | $(OBJ_BONUS_DIR)
 
 $(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEADER)
-	$(CC) $(CFLAGS) -I$(INCLUDE) -c $< -o $@ -g3
+	$(CC) $(CFLAGS) -I$(INCLUDE) -c $< -o $@
 
 $(OBJ_BONUS_DIR)%.o: $(SRC_BONUS_DIR)%.c $(HEADER_BONUS)
-	$(CC) $(CFLAGS) -I$(INCLUDE) -c $< -o $@ -g3
+	$(CC) $(CFLAGS) -I$(INCLUDE) -c $< -o $@
 
 clean:
 	rm -rf $(OBJ_DIR)

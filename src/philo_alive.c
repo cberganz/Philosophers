@@ -13,7 +13,7 @@
 
 #include "philo.h"
 
-uint8_t	they_ate_enought(t_root *root)
+uint8_t	they_ate_enough(t_root *root)
 {
 	int	i;
 	int	count;
@@ -23,7 +23,7 @@ uint8_t	they_ate_enought(t_root *root)
 	pthread_mutex_lock(&root->eat_enough_mut);
 	while (i < root->number_of_philo)
 	{
-		if (root->philos[i].eat_enought == 1)
+		if (root->philos[i].eat_enough == 1)
 			count++;
 		i++;
 	}
@@ -47,9 +47,9 @@ void	philo_master(t_root *root)
 			pthread_mutex_unlock(&root->philos[i].eating);
 			return ;
 		}
-		if (they_ate_enought(root))
+		if (they_ate_enough(root))
 		{
-			print_message(&root->philos[i], EAT_ENOUGHT);
+			print_message(&root->philos[i], EAT_ENOUGH);
 			pthread_mutex_unlock(&root->philos[i].eating);
 			return ;
 		}

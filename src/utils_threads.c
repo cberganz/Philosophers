@@ -16,7 +16,7 @@ static void	init_philo(t_root *root, int nb)
 {
 	root->philos[nb].id = nb + 1;
 	root->philos[nb].eat_count = 0;
-	root->philos[nb].eat_enought = 0;
+	root->philos[nb].eat_enough = 0;
 	root->philos[nb].last_eat = get_time();
 	root->philos[nb].root = root;
 	root->philos[nb].right = &root->forks[nb];

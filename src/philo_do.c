@@ -45,7 +45,7 @@ void	philo_do_eat(t_philo *philo)
 		&& philo->eat_count >= philo->root->number_of_meals)
 	{
 		pthread_mutex_lock(&philo->root->eat_enough_mut);
-		philo->eat_enought = 1;
+		philo->eat_enough = 1;
 		pthread_mutex_unlock(&philo->root->eat_enough_mut);
 	}
 	pthread_mutex_unlock(&philo->eating);

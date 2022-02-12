@@ -20,6 +20,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <limits.h>
 # include <semaphore.h>
 # include <sys/time.h>
 # include <sys/wait.h>
@@ -44,7 +45,7 @@ typedef struct s_root
 	int				id;
 	int				eat_count;
 	int				last_eat;
-	int				eat_enought;
+	int				eat_enough;
 	pthread_t		*threads;
 	pthread_t		thread;
 	pthread_mutex_t	eating;
@@ -62,15 +63,50 @@ typedef struct s_philo
 */
 
 # define DIE "died"
-# define EAT_ENOUGHT "All philosophers ate enough !"
+# define EAT_ENOUGH "All philosophers ate enough !"
 # define FORK "has taken a fork"
 # define EAT "is eating"
 # define SLEEP "is sleeping"
 # define THINK "is thinking"
 
 /*
-**	EXIT
+**	Arguments parsing and structures initialization.
 */
+
+void	parse_arguments(int argc, char **args, t_root *root);
+
+/*
+**	Philo life and mastering.
+*/
+
+void	*philo_life(void *arg);
+void	*parent_master(void *arg);
+void	*child_master(void *arg);
+
+/*
+**	Process and threads utils.
+*/	
+
+void	create_forks(t_root *root, int nb);
+void	create_threads(t_root *root, int nb);
+void	join_threads(t_root *root, int nb);
+
+/*
+**	Utils.
+*/
+
+int		ft_atoi(const char *nptr);
+int		get_time(void);
+void	print_message(t_root *root, char *msg);
+void	my_usleep(long int timetosleep);
+
+/*
+**	Processes clean exit.
+*/
+
+void	ft_exit(int exit_code, t_root *root);
+void	free_parent(t_root *root);
+void	free_child(t_root *root);
 
 # define USAGE_ERR 2
 # define USAGE "Usage : ./philo nb_philo t_die t_eat t_sleep [nb_meals]"
@@ -97,44 +133,9 @@ typedef struct s_philo
 # define PTHREAD_JOIN_ERR 13
 # define PTHREAD_JOIN "Error : pthread_join() on child thread."
 
-static const char **error_messages = ((const char *[12]) {USAGE, ARGS, MALLOC_PHILO, MALLOC_THREADS, MALLOC_FORKSPID, FORKSSEM_OPEN, PRINTSEM_OPEN, TAKINGFORKSEM_OPEN, EATINGSEM_OPEN, PTHREAD_CREATE_CHILD, PTHREAD_CREATE_PARENT, PTHREAD_JOIN});
-
-/*
-**	Parsing
-*/
-
-void	parse_args(int argc, char **args, t_root *root);
-void	initialize_structures(t_root *root);
-
-/*
-**	Philo life
-*/
-
-void	*philo_life(void *arg);
-void	*parent_master(void *arg);
-void	*child_master(void *arg);
-void	philo_do_take_fork(t_root *root);
-void	philo_do_eat(t_root *root);
-void	philo_do_sleep(t_root *root);
-void	philo_do_think(t_root *root);
-
-/*
-**	Thread utils
-*/	
-
-void	create_forks(t_root *root, int nb);
-void	kill_processes(t_root *root, int nb);
-void	create_threads(t_root *root, int nb);
-
-/*
-**	Utils
-*/
-
-int		ft_atoi(const char *nptr);
-int		get_time(void);
-void	print_message(t_root *root, char *msg);
-void	my_usleep(long int timetosleep);
-void	ft_exit(int exit_code);
-void	free_all(t_root *root);
+static const char **error_messages = ((const char *[14]) {NULL, NULL, USAGE,
+		ARGS, MALLOC_PHILO, MALLOC_THREADS, MALLOC_FORKSPID, FORKSSEM_OPEN,
+		PRINTSEM_OPEN, TAKINGFORKSEM_OPEN, EATINGSEM_OPEN,
+		PTHREAD_CREATE_CHILD, PTHREAD_CREATE_PARENT, PTHREAD_JOIN});
 
 #endif	

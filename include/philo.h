@@ -19,6 +19,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <string.h>
+# include <limits.h>
 # include <sys/time.h>
 
 typedef struct s_philo
@@ -26,7 +27,7 @@ typedef struct s_philo
 	int				id;
 	int				eat_count;
 	int				last_eat;
-	int				eat_enought;
+	int				eat_enough;
 	pthread_t		thread;
 	pthread_mutex_t	*right;
 	pthread_mutex_t	*left;
@@ -55,7 +56,7 @@ typedef struct s_root
 */
 
 # define DIE "died"
-# define EAT_ENOUGHT "All philosophers ate enought !"
+# define EAT_ENOUGH "All philosophers ate enough !"
 # define FORK "has taken a fork"
 # define EAT "is eating"
 # define SLEEP "is sleeping"
