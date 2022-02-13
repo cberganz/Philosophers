@@ -69,6 +69,7 @@ void	*child_master(void *arg)
 		sem_wait(root->eating_sem);
 		if (get_time() >= (root->last_eat + root->time_to_die))
 		{
+			print_message(root, DIE);
 			sem_post(root->eating_sem);
 			free_child(root);
 			exit(1);
@@ -80,7 +81,7 @@ void	*child_master(void *arg)
 			exit(2);
 		}
 		sem_post(root->eating_sem);
-		my_usleep(5);
+	//	my_usleep(5);
 	}
 	return (NULL);
 }

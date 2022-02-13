@@ -41,6 +41,7 @@ typedef struct s_root
 	sem_t			*taking_fork_sem;
 	sem_t			*end_sem;
 	sem_t			*eating_sem;
+	sem_t			*finish_sem;
 	pid_t			*forks_pid;
 	int				id;
 	int				eat_count;
@@ -126,16 +127,18 @@ void	free_child(t_root *root);
 # define TAKINGFORKSEM_OPEN "Error : sem_open() on taking_fork_sem."
 # define EATINGSEM_OPEN_ERR 10
 # define EATINGSEM_OPEN "Error : sem_open() on eating_sem."
-# define PTHREAD_CREATE_CHILD_ERR 11
+# define FINISHSEM_OPEN_ERR 11
+# define FINISHSEM_OPEN "Error : sem_open() on finish_sem."
+# define PTHREAD_CREATE_CHILD_ERR 12
 # define PTHREAD_CREATE_CHILD "Error : pthread_create() on child thread."
-# define PTHREAD_CREATE_PARENT_ERR 12
+# define PTHREAD_CREATE_PARENT_ERR 13
 # define PTHREAD_CREATE_PARENT "Error : pthread_create() on parent thread."
-# define PTHREAD_JOIN_ERR 13
+# define PTHREAD_JOIN_ERR 14
 # define PTHREAD_JOIN "Error : pthread_join() on child thread."
 
-static const char **error_messages = ((const char *[14]) {NULL, NULL, USAGE,
+static const char **error_messages = ((const char *[15]) {NULL, NULL, USAGE,
 		ARGS, MALLOC_PHILO, MALLOC_THREADS, MALLOC_FORKSPID, FORKSSEM_OPEN,
-		PRINTSEM_OPEN, TAKINGFORKSEM_OPEN, EATINGSEM_OPEN,
+		PRINTSEM_OPEN, TAKINGFORKSEM_OPEN, EATINGSEM_OPEN, FINISHSEM_OPEN
 		PTHREAD_CREATE_CHILD, PTHREAD_CREATE_PARENT, PTHREAD_JOIN});
 
 #endif	

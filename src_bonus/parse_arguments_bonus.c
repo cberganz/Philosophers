@@ -60,18 +60,24 @@ static void	initialize_semaphores(t_root *root)
 	sem_unlink("/print_sem");
 	sem_unlink("/taking_fork_sem");
 	sem_unlink("/eating_sem");
-	root->forks_sem = sem_open("/forks_sem", O_CREAT | O_EXCL, 0660, root->number_of_philo);
+	sem_unlink("/finish_sem");
+	root->forks_sem = sem_open("/forks_sem", O_CREAT | O_EXCL,
+		0660, root->number_of_philo);
 	if (root->forks_sem == SEM_FAILED)
 		ft_exit(FORKSSEM_OPEN_ERR, root);
 	root->print_sem = sem_open("/print_sem", O_CREAT | O_EXCL, 0660, 1);
 	if (root->print_sem == SEM_FAILED)
 		ft_exit(PRINTSEM_OPEN_ERR, root);
-	root->taking_fork_sem = sem_open("/taking_fork_sem", O_CREAT | O_EXCL, 0600, 1);
+	root->taking_fork_sem = sem_open("/taking_fork_sem",
+		O_CREAT | O_EXCL, 0600, 1);
 	if (root->taking_fork_sem == SEM_FAILED)
 		ft_exit(TAKINGFORKSEM_OPEN_ERR, root);
 	root->eating_sem = sem_open("/eating_sem", O_CREAT | O_EXCL, 0600, 1);
 	if (root->eating_sem == SEM_FAILED)
 		ft_exit(EATINGSEM_OPEN_ERR, root);
+	root->finish_sem = sem_open("/finish_sem", O_CREAT | O_EXCL, 0600, 1);
+	if (root->finish_sem == SEM_FAILED)
+		ft_exit(FINISHSEM_OPEN_ERR, root);
 }
 
 /*

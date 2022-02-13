@@ -17,7 +17,7 @@ void	ft_exit(int exit_code, t_root *root)
 **	Unlink named semaphores and close them.
 **	Close named semaphores using sem_close() function.
 **	sem_close() function performs error return if a semaphore does not exist.
-**	Free memory allocated with malloc() if it has been allocated.
+**	Free memory allocated with malloc().
 */
 
 void	free_parent(t_root *root)
@@ -26,10 +26,12 @@ void	free_parent(t_root *root)
 	sem_unlink("/print_sem");
 	sem_unlink("/taking_fork_sem");
 	sem_unlink("/eating_sem");
+	sem_unlink("/finish_sem");
 	sem_close(root->forks_sem);	
 	sem_close(root->print_sem);
 	sem_close(root->taking_fork_sem);
 	sem_close(root->eating_sem);
+	sem_close(root->finish_sem);
 	if (root->philo)
 		free(root->philo);
 	if (root->threads)
@@ -39,11 +41,11 @@ void	free_parent(t_root *root)
 }
 
 /*
-**	This function clear a child process memory befor exit.
+**	This function clear a child process memory before exit.
 **	Join the thread running philo_life() function.
 **	Close named semaphores using sem_close() function.
 **	sem_close() function performs error return if a semaphore does not exist.
-**	Free memory allocated with malloc() if it has been allocated.
+**	Free memory allocated with malloc().
 */
 
 void	free_child(t_root *root)
@@ -54,6 +56,7 @@ void	free_child(t_root *root)
 	sem_close(root->taking_fork_sem);
 	sem_close(root->print_sem);
 	sem_close(root->eating_sem);
+	sem_close(root->finish_sem);
 	if (root->philo)
 		free(root->philo);
 	if (root->threads)
