@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 06:46:14 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/07 17:49:57 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/17 11:05:48 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,24 +76,23 @@ void	my_usleep(long int timetosleep)
 
 void	print_message(t_root *root, char *msg)
 {
+	sem_wait(root->print_sem);
 	sem_wait(root->finish_sem);
 	if (root->finish == 1)
 	{
 		sem_post(root->finish_sem);
 		return ;
 	}
-	sem_post(root->finish_sem);
-	sem_wait(root->print_sem);
 	if (root->finish == 0)
 	{
 		printf("%d %d %s\n", get_time() - root->start_time, root->id, msg);
 		if (ft_strcmp(msg, DIE) == 0)
 		{
-			sem_wait(root->finish_sem);
 			root->finish = 1;
 			sem_post(root->finish_sem);
 			return ;
 		}
 	}
 	sem_post(root->print_sem);
+	sem_post(root->finish_sem);
 }

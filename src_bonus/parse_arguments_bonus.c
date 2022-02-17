@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 05:47:15 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/07 16:16:28 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/17 10:40:54 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static int8_t	args_not_int(char **s, int i)
 			s[i]++;
 		}
 		if ((result * sign) < INT_MIN || (result * sign) > INT_MAX
-				|| *s[i] != '\0')
+			|| *s[i] != '\0')
 			return (1);
 	}
 	return (0);
@@ -62,14 +62,14 @@ static void	initialize_semaphores(t_root *root)
 	sem_unlink("/eating_sem");
 	sem_unlink("/finish_sem");
 	root->forks_sem = sem_open("/forks_sem", O_CREAT | O_EXCL,
-		0660, root->number_of_philo);
+			0660, root->number_of_philo);
 	if (root->forks_sem == SEM_FAILED)
 		ft_exit(FORKSSEM_OPEN_ERR, root);
 	root->print_sem = sem_open("/print_sem", O_CREAT | O_EXCL, 0660, 1);
 	if (root->print_sem == SEM_FAILED)
 		ft_exit(PRINTSEM_OPEN_ERR, root);
 	root->taking_fork_sem = sem_open("/taking_fork_sem",
-		O_CREAT | O_EXCL, 0600, 1);
+			O_CREAT | O_EXCL, 0600, 1);
 	if (root->taking_fork_sem == SEM_FAILED)
 		ft_exit(TAKINGFORKSEM_OPEN_ERR, root);
 	root->eating_sem = sem_open("/eating_sem", O_CREAT | O_EXCL, 0600, 1);
@@ -117,9 +117,9 @@ void	parse_arguments(int argc, char **args, t_root *root)
 	if (args[5] != NULL)
 		root->number_of_meals = ft_atoi(args[5]);
 	if (root->number_of_philo < 1 || root->time_to_die < 1
-			|| root->time_to_eat < 1 || root->time_to_sleep < 1
-			|| (args[5] && root->number_of_meals < 1)
-			|| args_not_int(args, 0))
+		|| root->time_to_eat < 1 || root->time_to_sleep < 1
+		|| (args[5] && root->number_of_meals < 1)
+		|| args_not_int(args, 0))
 		ft_exit(ARGS_ERR, root);
 	allocate_memory(root);
 }

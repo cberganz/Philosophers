@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 04:27:51 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/07 17:49:58 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/17 10:39:02 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	create_threads(t_root *root, int nb)
 		philo[nb].root = root;
 		philo[nb].i = nb;
 		if (pthread_create(&philo[nb].root->threads[nb], NULL,
-			parent_master, &philo[nb]))
+				parent_master, &philo[nb]))
 			ft_exit(PTHREAD_CREATE_PARENT_ERR, root);
 	}
 }

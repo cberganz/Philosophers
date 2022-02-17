@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 04:28:26 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/07 16:35:47 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/17 10:43:21 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ typedef struct s_root
 
 typedef struct s_philo
 {
-	int	i;
+	int		i;
 	t_root	*root;
 }	t_philo;
 
@@ -82,7 +82,7 @@ void	parse_arguments(int argc, char **args, t_root *root);
 
 void	*philo_life(void *arg);
 void	*parent_master(void *arg);
-void	*child_master(void *arg);
+void	child_master(t_root *root);
 
 /*
 **	Process and threads utils.
@@ -136,7 +136,7 @@ void	free_child(t_root *root);
 # define PTHREAD_JOIN_ERR 14
 # define PTHREAD_JOIN "Error : pthread_join() on child thread."
 
-static const char **error_messages = ((const char *[15]) {NULL, NULL, USAGE,
+static const char	**g_error_messages = ((const char *[15]){NULL, NULL, USAGE,
 		ARGS, MALLOC_PHILO, MALLOC_THREADS, MALLOC_FORKSPID, FORKSSEM_OPEN,
 		PRINTSEM_OPEN, TAKINGFORKSEM_OPEN, EATINGSEM_OPEN, FINISHSEM_OPEN
 		PTHREAD_CREATE_CHILD, PTHREAD_CREATE_PARENT, PTHREAD_JOIN});

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_alive_bonus.c                                :+:      :+:    :+:   */
+/*   masters_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 12:31:45 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/07 17:47:21 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/17 11:06:21 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 void	*parent_master(void *arg)
 {
-	t_philo	*philo;
+	t_philo		*philo;
 	int			stat;
 	int			i;
 
@@ -57,23 +57,24 @@ void	*parent_master(void *arg)
 **	parent_master() function then handle the exit statut.
 */
 
-void	*child_master(void *arg)
+void	child_master(t_root *root)
 {
-	int	i;
-	t_root	*root;
+	int		i;
 
 	i = 0;
-	root = (t_root *)arg;
 	while (1)
 	{
 		sem_wait(root->eating_sem);
+		sem_wait(root->finish_sem);
 		if (get_time() >= (root->last_eat + root->time_to_die))
 		{
-			print_message(root, DIE);
 			sem_post(root->eating_sem);
+			sem_post(root->finish_sem);
+			print_message(root, DIE);
 			free_child(root);
 			exit(1);
 		}
+		sem_post(root->finish_sem);
 		if (root->eat_enough)
 		{
 			sem_post(root->eating_sem);
@@ -81,7 +82,5 @@ void	*child_master(void *arg)
 			exit(2);
 		}
 		sem_post(root->eating_sem);
-	//	my_usleep(5);
 	}
-	return (NULL);
 }

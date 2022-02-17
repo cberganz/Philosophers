@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 05:47:15 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/05 15:50:05 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/17 10:43:57 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static int8_t	args_not_int(char **s, int i)
 			s[i]++;
 		}
 		if ((result * sign) < INT_MIN || (result * sign) > INT_MAX
-				|| *s[i] != '\0')
+			|| *s[i] != '\0')
 			return (1);
 	}
 	return (0);

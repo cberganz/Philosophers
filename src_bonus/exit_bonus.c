@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit_bonus.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/02/17 10:39:39 by cberganz          #+#    #+#             */
+/*   Updated: 2022/02/17 10:44:31 by cberganz         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo_bonus.h"
 
 /*
@@ -7,7 +19,7 @@
 
 void	ft_exit(int exit_code, t_root *root)
 {
-	printf("%s\n", error_messages[exit_code]);
+	printf("%s\n", g_error_messages[exit_code]);
 	free_parent(root);
 	exit(exit_code);
 }
@@ -27,7 +39,7 @@ void	free_parent(t_root *root)
 	sem_unlink("/taking_fork_sem");
 	sem_unlink("/eating_sem");
 	sem_unlink("/finish_sem");
-	sem_close(root->forks_sem);	
+	sem_close(root->forks_sem);
 	sem_close(root->print_sem);
 	sem_close(root->taking_fork_sem);
 	sem_close(root->eating_sem);
@@ -64,4 +76,3 @@ void	free_child(t_root *root)
 	if (root->forks_pid)
 		free(root->forks_pid);
 }
-
