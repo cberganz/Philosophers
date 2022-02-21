@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 12:31:45 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/02 13:02:12 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/21 13:41:03 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	philo_master(t_root *root)
 	while (1)
 	{
 		pthread_mutex_lock(&root->philos[i].eating);
-		if (get_time() >= (root->philos[i].last_eat + root->time_to_die))
+		if (get_time() > (root->philos[i].last_eat + root->time_to_die))
 		{
 			print_message(&root->philos[i], DIE);
 			pthread_mutex_unlock(&root->philos[i].eating);
@@ -65,7 +65,7 @@ void	*philo_life(void *arg)
 
 	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
-		my_usleep(5);
+		my_usleep(10);
 	while (1)
 	{
 		philo_do_take_fork(philo);

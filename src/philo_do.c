@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 12:15:42 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/02 13:47:31 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/21 13:38:02 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	philo_do_take_fork(t_philo *philo)
 			print_message(philo, FORK);
 		}
 		else
-			my_usleep(philo->root->time_to_die);
+			my_usleep(philo->root->time_to_die + 1);
 	}
 }
 

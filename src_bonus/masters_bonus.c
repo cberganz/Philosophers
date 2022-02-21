@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 12:31:45 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/17 11:06:21 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/21 13:43:06 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	child_master(t_root *root)
 	{
 		sem_wait(root->eating_sem);
 		sem_wait(root->finish_sem);
-		if (get_time() >= (root->last_eat + root->time_to_die))
+		if (get_time() > (root->last_eat + root->time_to_die))
 		{
 			sem_post(root->eating_sem);
 			sem_post(root->finish_sem);
