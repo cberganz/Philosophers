@@ -23,7 +23,7 @@ HEADER_BONUS= $(INCLUDE)philo_bonus.h
 
 CC			= clang
 
-CFLAGS		= -Wall -Wextra -Werror#-fsanitize=thread -g3
+CFLAGS		= -Wall -Wextra -Werror -g3#-fsanitize=thread -g3
 
 SRC_FILES =	philo.c						\
 			philo_alive.c				\

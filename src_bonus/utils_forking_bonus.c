@@ -20,7 +20,8 @@ void	create_forks(t_root *root, int nb)
 		if (root->forks_pid[nb] == 0)
 		{
 			root->id = nb + 1;
-			if (pthread_create(&root->thread, NULL, &philo_life, root))
+			if (pthread_create(&root->thread, NULL, &philo_life, root)
+				|| pthread_detach(root->thread))
 				ft_exit(PTHREAD_CREATE_CHILD_ERR, root);
 			child_master(root);
 		}
@@ -36,8 +37,8 @@ void	create_threads(t_root *root, int nb)
 	{
 		philo[nb].root = root;
 		philo[nb].i = nb;
-		if (pthread_create(&philo[nb].root->threads[nb], NULL,
-				parent_master, &philo[nb]))
+		if (pthread_create(&philo[nb].root->threads[nb],
+			NULL,parent_master, &philo[nb]))
 			ft_exit(PTHREAD_CREATE_PARENT_ERR, root);
 	}
 }

@@ -76,7 +76,6 @@ void	my_usleep(long int timetosleep)
 
 void	print_message(t_root *root, char *msg)
 {
-	sem_wait(root->print_sem);
 	sem_wait(root->finish_sem);
 	if (root->finish == 1)
 	{
@@ -85,6 +84,7 @@ void	print_message(t_root *root, char *msg)
 	}
 	if (root->finish == 0)
 	{
+		sem_wait(root->print_sem);
 		printf("%d %d %s\n", get_time() - root->start_time, root->id, msg);
 		if (ft_strcmp(msg, DIE) == 0)
 		{
@@ -92,7 +92,7 @@ void	print_message(t_root *root, char *msg)
 			sem_post(root->finish_sem);
 			return ;
 		}
+		sem_post(root->print_sem);
 	}
-	sem_post(root->print_sem);
 	sem_post(root->finish_sem);
 }

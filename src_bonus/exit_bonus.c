@@ -62,8 +62,8 @@ void	free_parent(t_root *root)
 
 void	free_child(t_root *root)
 {
-	if (pthread_join(root->thread, NULL))
-		ft_exit(PTHREAD_JOIN_ERR, root);
+//	if (pthread_join(root->thread, NULL))
+//		ft_exit(PTHREAD_JOIN_ERR, root);
 	sem_close(root->forks_sem);
 	sem_close(root->taking_fork_sem);
 	sem_close(root->print_sem);

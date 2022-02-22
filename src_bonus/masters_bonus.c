@@ -15,8 +15,8 @@
 /*
 **	Launched by the main process as a thread. Wait for a child process to exit.
 **	It has to be launched once for each child process.
-**	If the child exit code is 1 (case 256), every other child is killed.
-**	If the child exit code is 2 (case 512), eat_enough_count is incremented.
+**	If the child exit code is 1, every other child is killed.
+**	If the child exit code is 2, eat_enough_count is incremented.
 */
 
 void	*parent_master(void *arg)
@@ -26,8 +26,9 @@ void	*parent_master(void *arg)
 	int			i;
 
 	philo = (t_philo *)arg;
+	stat = 0;
 	waitpid(philo->root->forks_pid[philo->i], &stat, WEXITSTATUS(stat));
-	if (stat == 256)
+	if (WEXITSTATUS(stat) == 1)
 	{
 		i = 0;
 		while (i < philo->root->number_of_philo)
@@ -37,7 +38,7 @@ void	*parent_master(void *arg)
 			i++;
 		}
 	}
-	else if (stat == 512)
+	else if (WEXITSTATUS(stat) == 2)
 	{
 		sem_wait(philo->root->eating_sem);
 		philo->root->eat_enough_count++;
@@ -66,11 +67,18 @@ void	child_master(t_root *root)
 	{
 		sem_wait(root->eating_sem);
 		sem_wait(root->finish_sem);
-		if (get_time() > (root->last_eat + root->time_to_die))
+		if (get_time() > (root->last_eat + root->time_to_die)/*root->finish == 1*/)
 		{
-			sem_post(root->eating_sem);
+//			sem_post(root->taking_fork_sem);
+//			sem_post(root->forks_sem);
+//			sem_post(root->forks_sem);
+			if (root->finish == 0)
+			{
+				sem_post(root->finish_sem);
+				print_message(root, DIE);
+			}
 			sem_post(root->finish_sem);
-			print_message(root, DIE);
+			sem_post(root->eating_sem);
 			free_child(root);
 			exit(1);
 		}
