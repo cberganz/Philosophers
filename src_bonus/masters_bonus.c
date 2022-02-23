@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/02 12:31:45 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/21 13:43:06 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/23 15:16:19 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,11 @@ void	*parent_master(void *arg)
 	waitpid(philo->root->forks_pid[philo->i], &stat, WEXITSTATUS(stat));
 	if (WEXITSTATUS(stat) == 1)
 	{
-		i = 0;
-		while (i < philo->root->number_of_philo)
+		i = -1;
+		while (++i < philo->root->number_of_philo)
 		{
 			if (i != philo->i)
 				kill(philo->root->forks_pid[i], SIGKILL);
-			i++;
 		}
 	}
 	else if (WEXITSTATUS(stat) == 2)
@@ -60,35 +59,42 @@ void	*parent_master(void *arg)
 
 void	child_master(t_root *root)
 {
-	int		i;
-
-	i = 0;
 	while (1)
 	{
 		sem_wait(root->eating_sem);
 		sem_wait(root->finish_sem);
-		if (get_time() > (root->last_eat + root->time_to_die)/*root->finish == 1*/)
+		if (get_time() > (root->last_eat + root->time_to_die))
 		{
-//			sem_post(root->taking_fork_sem);
-//			sem_post(root->forks_sem);
-//			sem_post(root->forks_sem);
 			if (root->finish == 0)
 			{
 				sem_post(root->finish_sem);
 				print_message(root, DIE);
 			}
-			sem_post(root->finish_sem);
-			sem_post(root->eating_sem);
-			free_child(root);
+			free_child(root, 1);
 			exit(1);
 		}
 		sem_post(root->finish_sem);
 		if (root->eat_enough)
 		{
 			sem_post(root->eating_sem);
-			free_child(root);
+			free_child(root, 0);
 			exit(2);
 		}
 		sem_post(root->eating_sem);
 	}
+}
+
+void	*philo_life(void *arg)
+{
+	t_root	*root;
+
+	root = (t_root *)arg;
+	while (root->finish != 1 && root->eat_enough != 1)
+	{
+		philo_do_take_fork(root);
+		philo_do_eat(root);
+		philo_do_sleep(root);
+		philo_do_think(root);
+	}
+	return (NULL);
 }

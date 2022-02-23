@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/28 04:28:26 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/18 13:56:01 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/23 15:14:37 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,10 @@ void	parse_arguments(int argc, char **args, t_root *root);
 */
 
 void	*philo_life(void *arg);
+void	philo_do_take_fork(t_root *root);
+void	philo_do_eat(t_root *root);
+void	philo_do_sleep(t_root *root);
+void	philo_do_think(t_root *root);
 void	*parent_master(void *arg);
 void	child_master(t_root *root);
 
@@ -107,7 +111,7 @@ void	my_usleep(long int timetosleep);
 
 void	ft_exit(int exit_code, t_root *root);
 void	free_parent(t_root *root);
-void	free_child(t_root *root);
+void	free_child(t_root *root, uint8_t release);
 
 # define USAGE_ERR 2
 # define USAGE "Usage : ./philo nb_philo t_die t_eat t_sleep [nb_meals]"

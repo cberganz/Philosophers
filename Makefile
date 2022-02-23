@@ -6,7 +6,7 @@
 #    By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/29 08:20:09 by cberganz          #+#    #+#              #
-#    Updated: 2022/02/17 11:09:07 by cberganz         ###   ########.fr        #
+#    Updated: 2022/02/23 15:03:37 by cberganz         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ HEADER_BONUS= $(INCLUDE)philo_bonus.h
 
 CC			= clang
 
-CFLAGS		= -Wall -Wextra -Werror -g3#-fsanitize=thread -g3
+CFLAGS		= -Wall -Wextra -Werror -g -fsanitize=thread
 
 SRC_FILES =	philo.c						\
 			philo_alive.c				\

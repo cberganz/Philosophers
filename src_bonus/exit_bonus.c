@@ -6,7 +6,7 @@
 /*   By: cberganz <cberganz@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/17 10:39:39 by cberganz          #+#    #+#             */
-/*   Updated: 2022/02/17 10:44:31 by cberganz         ###   ########.fr       */
+/*   Updated: 2022/02/23 15:16:13 by cberganz         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,25 @@ void	free_parent(t_root *root)
 **	Free memory allocated with malloc().
 */
 
-void	free_child(t_root *root)
+static void	release_sem(t_root *root, int nb_philo)
 {
-//	if (pthread_join(root->thread, NULL))
-//		ft_exit(PTHREAD_JOIN_ERR, root);
+	while (nb_philo > 0)
+	{
+		sem_post(root->taking_fork_sem);
+		sem_post(root->forks_sem);
+		sem_post(root->forks_sem);
+		sem_post(root->eating_sem);
+		sem_post(root->finish_sem);
+		nb_philo--;
+	}
+}
+
+void	free_child(t_root *root, uint8_t release)
+{
+	if (release == 1)
+		release_sem(root, root->number_of_philo);
+	if (pthread_join(root->thread, NULL))
+		ft_exit(PTHREAD_JOIN_ERR, root);
 	sem_close(root->forks_sem);
 	sem_close(root->taking_fork_sem);
 	sem_close(root->print_sem);
