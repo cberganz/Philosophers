@@ -1,11 +1,28 @@
-## PTHREADS ##
+# Philosophers
 
-#PREREQUISITES
+| Project Name | philosophers |
+| :-: | :-: |
+| Description | An introduction to multithreading and forking using mutexes and semaphores |
+| Technologies | <a href="#"><img alt="C" src="https://custom-icon-badges.demolab.com/badge/C-03599C.svg?logo=c-in-hexagon&logoColor=white&style=for-the-badge"></a> |
+| External libraries | memset(), printf(), malloc(), free(), write(), usleep(), gettimeofday(), pthread_create(), pthread_detach(), pthread_join(), pthread_mutex_init(), pthread_mutex_destroy(), pthread_mutex_lock(), pthread_mutex_unlock() |
+| Additional libraries for bonuses | fork(), kill(), exit(), waitpid(), sem_open(), sem_close(), sem_post(), sem_wait(), sem_unlink() |
+| Final grade | 125/125 |
+
+## Usage
+```
+git clone https://github.com/cberganz/Philosophers.git
+cd Philosophers
+make # or 'make bonus' forking version
+./philo [number_of_philosophers] [time_to_die time_to_eat] [time_to_sleep] [number_of_times_each_philosopher_must_eat]
+```
+
+# PTHREADS
+## PREREQUISITES
 
 - Include : pthread.h
 - Makefile : -pthread flag option
 
-#WHAT
+## WHAT
 
 - Create a thread execute a fonction
 - Create a variable pthread_t tname
@@ -13,7 +30,7 @@
 - Invoque pthread_join(tname, NULL or pointer to received the return of the thread)
 - pthread_create fonction return 0 if the thread has been created. Otherwise, you need to protect the call by placing it inside a if statement. Return an exit error if the thread has not been created or the join did not work as expected.
 
-#DIFFERENCE THREAD AND PROCCESSES
+## DIFFERENCE THREAD AND PROCCESSES
 
 - Processes :
 	int pid = fork();
@@ -30,11 +47,11 @@
 	--> will execute ACTIONS 2 times with the same pid.
 	--> Threading will use the same variables for all threads leading to issues when different threads are trying to access the same variable.
 
-#RACE CONDITIONS
+## RACE CONDITIONS
 
 Race condition is what happen when different threads are trying to read and modify the same variable at the same time. It results in undeterminate behaviour.
 
-#MUTEX
+## MUTEX
 
 Mutex is one of the possible solutions to the race condition issue. A mutex is a sort of lock. it consist in a boolean variable define to 1 if a variable is locked or 0 if its not locked.
 Here is a simple implementation of a mutex varible :
@@ -58,7 +75,7 @@ Here is a simple implementation of a mutex varible :
 		pthread_mutex_destroy(&mutex);
 	}
 
-#CREATE THREADS IN A LOOP
+## CREATE THREADS IN A LOOP
 
 	pthread_t threads[4];
 	while (i < 4){
@@ -74,7 +91,7 @@ Here is a simple implementation of a mutex varible :
 	}
 --> Pay attention not joining the threads in the first while loop or thread n+1 will be creating only when the thread n is finished, wich is not the expected behaviour.
 
-#GET RETURN VALUE FROM A THREAD
+## GET RETURN VALUE FROM A THREAD
 
 --> To get return value of a fonction executed by a thread, we use the second parameter of the pthread_join(pthread_t tname, void **thread_return) fonction.
 --> The fonction called by a thread must be prototyped as : void *ft([args]). The thread return is a pointer to that void *ptr.
@@ -95,7 +112,7 @@ Here is a simple implementation of a mutex varible :
 		free(res);
 	}
 
-#HOW TO PASS ARGUMENTS TO THREADS
+## HOW TO PASS ARGUMENTS TO THREADS
 
 	#include <stdio.h>
 	#include <stdlib.h>
@@ -133,7 +150,7 @@ Here is a simple implementation of a mutex varible :
 	--> (1) Another better solution to avoid allocating memory here would be sending prime + i pointer to routine !
 	--> (2) Also here arg is deallocated in the routine function. The best practice is to modify its value in order to use it as return value of the routine. That way you can free memory in the function it has been allocated. This practice prevent from many memory errors to make it easier handling them.
 
-# SEMAPHORES
+## SEMAPHORES
 
 	#include <fcntl.h> // For O_* constants
 	#include <sys/stat.h> // For mode constants
@@ -178,7 +195,7 @@ Here is a simple implementation of a mutex varible :
 	** Returns 0 on success, -1 with errno set on error.
 	*/
 
-# FORK
+## FORK
 
 	#include <sys/wait.h>
 	pid_t waitpid(pid_t pid, int *stat_loc, int options)
